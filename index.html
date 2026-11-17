@@ -6,216 +6,282 @@
     <title>CyberVault Miner</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --bg-color: #0b0e14;
-            --card-bg: #151b26;
-            --accent: #00f2fe;
-            --accent-grad: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --text-main: #ffffff;
-            --text-muted: #8a94a6;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap');
 
         * {
             box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
             margin: 0;
-            padding: 16px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            padding: 0;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        body {
+            background-color: #05070b;
+            color: #ffffff;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            justify-content: space-between;
+            height: 100vh;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 10%, rgba(0, 243, 255, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 10% 90%, rgba(255, 0, 85, 0.05) 0%, transparent 50%);
         }
-
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--card-bg);
-            padding: 12px 16px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px 20px;
+            background: rgba(11, 15, 25, 0.9);
+            border-bottom: 2px solid rgba(0, 243, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
-
         .user-info {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-weight: 600;
-            font-size: 14px;
         }
-
-        .avatar {
-            width: 32px;
-            height: 32px;
+        /* Фирменный логотип монетки в шапке */
+        .coin-logo {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #00f3ff, #0066ff);
             border-radius: 50%;
-            background: var(--accent-grad);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #000;
-            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 14px;
+            color: #05070b;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
-
-        .balance-section {
-            text-align: center;
-            margin: 24px 0;
+        .username {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
-
-        .balance-label {
-            color: var(--text-muted);
-            font-size: 13px;
+        .version {
+            font-size: 11px;
+            font-family: 'Orbitron', sans-serif;
+            color: #ff0055;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
-        .balance-amount {
-            font-size: 42px;
-            font-weight: 800;
-            margin: 6px 0;
-            background: var(--accent-grad);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: none;
         }
-
-        .vault-container {
+        .content.active {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            margin: 10px 0;
         }
-
-        .vault-circle {
+        /* Главный экран */
+        .balance-section {
+            text-align: center;
+            margin-top: 5px;
+        }
+        .balance-title {
+            font-size: 11px;
+            color: #6c7a92;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .balance-amount {
+            font-size: 32px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            color: #00f3ff;
+            margin-top: 3px;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+        }
+        .safe-container {
+            position: relative;
             width: 170px;
             height: 170px;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 50%;
-            background: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
-            border: 3px solid var(--accent);
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
+            background: radial-gradient(circle, rgba(0,243,255,0.12) 0%, rgba(5,7,11,0) 70%);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+            border: 2px solid rgba(0, 243, 255, 0.4);
+            animation: pulse-glow 3s infinite alternate;
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); border-color: rgba(0, 243, 255, 0.3); }
+            100% { box-shadow: 0 0 40px rgba(255, 0, 85, 0.4); border-color: rgba(255, 0, 85, 0.6); }
+        }
+        .safe-inner {
+            text-align: center;
+        }
+        .safe-amount {
+            font-size: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            margin-top: 3px;
+        }
+        .safe-speed {
+            font-size: 11px;
+            color: #00f3ff;
+            margin-top: 2px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .progress-box {
+            width: 100%;
+            max-width: 340px;
+            background: rgba(18, 24, 38, 0.8);
+            padding: 12px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+        }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #8b9bb4;
+            margin-bottom: 5px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .progress-bar-bg {
+            width: 100%;
+            height: 7px;
+            background: #05070b;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00f3ff, #ff0055);
+            width: 0%;
+            transition: width 0.3s;
+            box-shadow: 0 0 10px #00f3ff;
+        }
+        .btn-cyber {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(135deg, #00f3ff, #0066ff);
+            border: none;
+            border-radius: 10px;
+            color: #05070b;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 243, 255, 0.4);
+            transition: 0.2s;
+        }
+        .btn-cyber:active {
+            transform: scale(0.97);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #ff0055, #ff5500);
+            box-shadow: 0 5px 20px rgba(255, 0, 85, 0.4);
+            color: #ffffff;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #00ff88, #00b8ff);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+            color: #05070b;
+        }
+        .btn-ston {
+            background: linear-gradient(135deg, #0088ff, #7000ff);
+            box-shadow: 0 5px 20px rgba(112, 0, 255, 0.4);
+            color: #ffffff;
+        }
+        /* Вкладки и карточки */
+        .section-title {
+            font-size: 18px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            margin-bottom: 12px;
+            align-self: flex-start;
+            color: #00f3ff;
+            text-shadow: 0 0 10px rgba(0,243,255,0.3);
+        }
+        .card {
+            width: 100%;
+            max-width: 340px;
+            background: rgba(18, 24, 38, 0.8);
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-info h4 {
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .card-info p {
+            font-size: 11px;
+            color: #8b9bb4;
+            margin-top: 2px;
+        }
+        .input-cyber {
+            width: 100%;
+            background: #05070b;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            margin-bottom: 10px;
+            outline: none;
+        }
+        .input-cyber:focus {
+            border-color: #00f3ff;
+            box-shadow: 0 0 10px rgba(0,243,255,0.3);
+        }
+        /* Нижнее меню */
+        .nav-bar {
+            display: flex;
+            background: rgba(11, 15, 25, 0.95);
+            border-top: 2px solid rgba(0, 243, 255, 0.2);
+            height: 60px;
+        }
+        .nav-item {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            position: relative;
-            transition: transform 0.1s;
-        }
-
-        .vault-circle:active {
-            transform: scale(0.95);
-        }
-
-        .mined-now {
-            font-size: 22px;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .mining-rate {
-            font-size: 12px;
-            color: var(--accent);
-            margin-top: 4px;
-        }
-
-        .storage-box {
-            background: var(--card-bg);
-            padding: 16px;
-            border-radius: 16px;
-            margin-top: 16px;
-        }
-
-        .storage-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .progress-bg {
-            width: 100%;
-            height: 10px;
-            background: #0b0e14;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--accent-grad);
-            transition: width 0.3s ease;
-        }
-
-        .claim-btn {
-            width: 100%;
-            margin-top: 14px;
-            padding: 14px;
+            background: none;
             border: none;
-            border-radius: 12px;
-            background: var(--accent-grad);
-            color: #000;
-            font-weight: 700;
-            font-size: 16px;
+            color: #6c7a92;
+            font-size: 8px;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
             cursor: pointer;
-            transition: opacity 0.2s;
+            gap: 2px;
+            transition: 0.2s;
         }
-
-        .claim-btn:disabled {
-            background: #2a3441;
-            color: #64748b;
-            cursor: not-allowed;
+        .nav-item.active {
+            color: #00f3ff;
+            text-shadow: 0 0 10px rgba(0,243,255,0.5);
         }
-
-        .upgrades {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .upgrade-card {
-            background: var(--card-bg);
-            padding: 14px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .up-title {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .up-lvl {
-            font-size: 12px;
-            color: var(--accent);
-            margin: 4px 0 10px 0;
-        }
-
-        .up-btn {
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid var(--accent);
-            background: rgba(0, 242, 254, 0.1);
-            color: var(--text-main);
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        .up-btn:disabled {
-            border-color: #334155;
-            background: transparent;
-            color: #475569;
+        .nav-item svg {
+            width: 17px;
+            height: 17px;
+            fill: currentColor;
         }
     </style>
 </head>
@@ -223,163 +289,321 @@
 
     <div class="header">
         <div class="user-info">
-            <div class="avatar" id="avatar">U</div>
-            <span id="username">Miner</span>
+            <!-- Логотип монетки вместо аватара -->
+            <div class="coin-logo">VLT</div>
+            <span class="username" id="user-name">OPERATOR</span>
         </div>
-        <div style="font-size: 12px; color: var(--accent); font-weight: 600;">CyberVault v1.0</div>
+        <div class="version">VLT v5.1</div>
     </div>
 
-    <div class="balance-section">
-        <div class="balance-label">Твой баланс</div>
-        <div class="balance-amount"><span id="balance">0.00</span> $VLT</div>
-    </div>
-
-    <div class="vault-container">
-        <div class="vault-circle" onclick="tapVault()">
-            <div style="font-size: 28px; margin-bottom: 4px;">🔐</div>
-            <div class="mined-now" id="mined">0.000</div>
-            <div class="mining-rate">+<span id="rate-display">0.00</span> / сек</div>
+    <!-- ВКЛАДКА 1: МАЙНЕР -->
+    <div id="tab-miner" class="content active">
+        <div class="balance-section">
+            <div class="balance-title">Общий баланс</div>
+            <div class="balance-amount"><span id="balance">0.00</span> $VLT</div>
         </div>
-    </div>
 
-    <div class="storage-box">
-        <div class="storage-header">
-            <span>Заполнение сейфа</span>
-            <span><span id="storage-pct">0</span>% (Макс: <span id="max-cap">10</span>)</span>
-        </div>
-        <div class="progress-bg">
-            <div class="progress-fill" id="progress-bar"></div>
-        </div>
-        <button class="claim-btn" id="claim-btn" onclick="claimTokens()">Забрать токены</button>
-    </div>
-
-    <div class="upgrades">
-        <div class="upgrade-card">
-            <div>
-                <div class="up-title">⚡ Дешифратор</div>
-                <div class="up-lvl">Уровень <span id="speed-lvl">1</span></div>
+        <div class="safe-container">
+            <div class="safe-inner">
+                <div style="font-size: 20px;">⚡</div>
+                <div class="safe-amount" id="safe-balance">0.0000</div>
+                <div class="safe-speed" id="current-speed-text">+0.01 / сек</div>
             </div>
-            <button class="up-btn" id="btn-speed" onclick="upgradeSpeed()">Улучшить (<span id="speed-cost">5</span> $VLT)</button>
         </div>
 
-        <div class="upgrade-card">
-            <div>
-                <div class="up-title">📦 Объем сейфа</div>
-                <div class="up-lvl">Уровень <span id="cap-lvl">1</span></div>
+        <div class="progress-box">
+            <div class="progress-info">
+                <span>Хранилище сейфа</span>
+                <span id="progress-percent">0% (Макс: 20)</span>
             </div>
-            <button class="up-btn" id="btn-cap" onclick="upgradeCap()">Улучшить (<span id="cap-cost">5</span> $VLT)</button>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+            <button class="btn-cyber" onclick="claimTokens()">Забрать токены</button>
         </div>
+    </div>
+
+    <!-- ВКЛАДКА 2: ДОП. ШАХТЫ -->
+    <div id="tab-mines" class="content">
+        <div class="section-title">🏭 Доп. Шахты</div>
+        <p style="font-size: 11px; color: #8b9bb4; margin-bottom: 12px; text-align: center;">
+            Покупай автономные фермы за TON/GRAM. Они приносят пассивный доход автоматически!
+        </p>
+
+        <div class="card">
+            <div class="card-info">
+                <h4>💻 GPU-Ферма RTX</h4>
+                <p>Доп. шахта: <b style="color: #00f3ff;" id="gpu-status">Не куплена</b> (+0.03 VLT/сек)</p>
+            </div>
+            <div class="card-row">
+                <span style="color: #00f3ff; font-family: 'Orbitron'; font-weight: bold;">3 TON / GRAM</span>
+                <button class="btn-cyber btn-success" style="width: auto; padding: 7px 12px; font-size: 11px;" id="gpu-btn" onclick="buyMiningRig('gpu', 3, 0.03)">Купить</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-info">
+                <h4>⚙️ ASIC-Кластер S21</h4>
+                <p>Доп. шахта: <b style="color: #00f3ff;" id="asic-status">Не куплен</b> (+0.10 VLT/сек)</p>
+            </div>
+            <div class="card-row">
+                <span style="color: #00f3ff; font-family: 'Orbitron'; font-weight: bold;">10 TON / GRAM</span>
+                <button class="btn-cyber btn-success" style="width: auto; padding: 7px 12px; font-size: 11px;" id="asic-btn" onclick="buyMiningRig('asic', 10, 0.10)">Купить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА 3: ОБМЕН (STON.fi) -->
+    <div id="tab-dex" class="content">
+        <div class="section-title">🔄 Обмен / STON.fi</div>
+        <p style="font-size: 11px; color: #8b9bb4; margin-bottom: 12px; text-align: center;">
+            Свапай твои <b style="color: #00f3ff;">$VLT</b> через пулы ликвидности **STON.fi**.
+        </p>
+
+        <div class="progress-box" style="width: 100%; max-width: 340px;">
+            <label style="font-size: 11px; color: #8b9bb4; display: block; margin-bottom: 4px; font-family: 'Orbitron';">Отдаешь ($VLT)</label>
+            <input type="number" id="swap-amount" class="input-cyber" placeholder="1000" oninput="calculateSwap()">
+            
+            <div style="font-size: 12px; color: #00f3ff; margin-bottom: 10px; font-family: 'Orbitron'; text-align: center;" id="swap-result">
+                Получаешь ≈ 0.1 TON
+            </div>
+
+            <button class="btn-cyber btn-ston" onclick="executeStonSwap()">Обменять через STON.fi</button>
+        </div>
+
+        <div class="card" style="text-align: center; padding: 10px;">
+            <div class="card-info" style="width: 100%;">
+                <h4 style="color: #00ff88;">Tonkeeper Connect</h4>
+                <p style="margin-top: 2px;">Интеграция с кошельком.</p>
+            </div>
+            <button class="btn-cyber btn-success" style="padding: 8px; font-size: 11px;" onclick="connectTonkeeperWallet()">Подключить Tonkeeper</button>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА 4: ВЫВОД СРЕДСТВ -->
+    <div id="tab-wallet" class="content">
+        <div class="section-title">💸 Вывод средств</div>
+        <p style="font-size: 11px; color: #8b9bb4; margin-bottom: 12px; text-align: center;">
+            Выводи заработанные <b style="color: #00f3ff;">$VLT</b>. Мин. сумма: <b style="color: #ff0055;">5 000 $VLT</b>.
+        </p>
+
+        <div class="progress-box" style="width: 100%; max-width: 340px;">
+            <label style="font-size: 11px; color: #8b9bb4; display: block; margin-bottom: 4px; font-family: 'Orbitron';">Твой TON Кошелек</label>
+            <input type="text" id="ton-wallet" class="input-cyber" placeholder="UQD... ваш кошелек TON">
+            
+            <label style="font-size: 11px; color: #8b9bb4; display: block; margin-bottom: 4px; font-family: 'Orbitron';">Сумма вывода ($VLT)</label>
+            <input type="number" id="withdraw-amount" class="input-cyber" placeholder="5000">
+
+            <button class="btn-cyber btn-danger" onclick="requestWithdrawal()">Запросить вывод</button>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА 5: ДРУЗЬЯ -->
+    <div id="tab-friends" class="content">
+        <div class="section-title">👥 Синдикат</div>
+        <p style="font-size: 11px; color: #8b9bb4; margin-bottom: 12px; text-align: center;">
+            Приглашай операторов и получай по <b style="color: #00f3ff;">100 $VLT</b> за каждого!
+        </p>
+        <div class="progress-box" style="text-align: center;">
+            <div style="font-size: 11px; color: #8b9bb4; font-family: 'Orbitron';">Приглашено рефералов</div>
+            <div style="font-size: 26px; font-family: 'Orbitron'; font-weight: 900; color: #00f3ff; margin: 3px 0;" id="friends-count">0</div>
+        </div>
+        <button class="btn-cyber" onclick="inviteFriend()">Сгенерировать ссылку</button>
+    </div>
+
+    <!-- НИЖНЕЕ МЕНЮ -->
+    <div class="nav-bar">
+        <button class="nav-item active" onclick="switchTab('miner', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            Майнер
+        </button>
+        <button class="nav-item" onclick="switchTab('mines', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2v2.17c3.95.49 7 3.85 7 7.93 0 4.41-3.59 8-8 8s-8-3.59-8-8c0-4.08 3.05-7.44 7-7.93V4c0-1.1.9-2 2-2zm0 18c3.31 0 6-2.69 6-6s-2.69-6-6-6-6 2.69-6 6 2.69 6 6 6zm-1-9h2v4h-2zm0-3h2v2h-2z"/></svg>
+            Шахты
+        </button>
+        <button class="nav-item" onclick="switchTab('dex', this)">
+            <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+            Обмен
+        </button>
+        <button class="nav-item" onclick="switchTab('wallet', this)">
+            <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            Кошелёк
+        </button>
+        <button class="nav-item" onclick="switchTab('friends', this)">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            Друзья
+        </button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.setHeaderColor('#0b0e14');
+
+        const OWNER_TON_WALLET = "UQD1yWfSHDBQfdsHSMbxQZ4ENGCfqRMSJpnit1zMfTxVVoB1";
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const user = tg.initDataUnsafe.user;
-            document.getElementById('username').innerText = user.first_name || user.username || 'Miner';
-            document.getElementById('avatar').innerText = (user.first_name || 'M')[0].toUpperCase();
+            document.getElementById('user-name').innerText = user.first_name || 'OPERATOR';
         }
 
-        let state = JSON.parse(localStorage.getItem('cybervault_save')) || {
-            balance: 0,
-            speedLvl: 1,
-            capLvl: 1,
-            lastClaim: Date.now()
+        let gameData = {
+            balance: parseFloat(localStorage.getItem('vlt_balance')) || 0,
+            safeBalance: parseFloat(localStorage.getItem('vlt_safe')) || 0,
+            maxSafe: 20,
+            baseSpeed: parseFloat(localStorage.getItem('vlt_speed')) || 0.01,
+            gpuOwned: localStorage.getItem('vlt_gpu') === 'true',
+            asicOwned: localStorage.getItem('vlt_asic') === 'true',
+            lastSaveTime: parseInt(localStorage.getItem('vlt_last_time')) || Date.now(),
+            friendsCount: parseInt(localStorage.getItem('vlt_friends')) || 0,
+            savedWallet: localStorage.getItem('vlt_wallet') || ''
         };
 
-        function getRate() {
-            return +(0.005 * Math.pow(1.4, state.speedLvl - 1)).toFixed(4);
+        if(gameData.savedWallet) {
+            document.getElementById('ton-wallet').value = gameData.savedWallet;
         }
 
-        function getMaxCap() {
-            return +(10 * Math.pow(1.5, state.capLvl - 1)).toFixed(2);
+        function getTotalSpeed() {
+            let speed = gameData.baseSpeed;
+            if (gameData.gpuOwned) speed += 0.03;
+            if (gameData.asicOwned) speed += 0.10;
+            return speed;
         }
 
-        function getSpeedCost() {
-            return +(5 * Math.pow(1.8, state.speedLvl - 1)).toFixed(2);
+        function calculateOfflineMining() {
+            const now = Date.now();
+            const elapsedSeconds = (now - gameData.lastSaveTime) / 1000;
+            if (elapsedSeconds > 1) {
+                const minedWhileAway = elapsedSeconds * getTotalSpeed();
+                gameData.safeBalance += minedWhileAway;
+                if (gameData.safeBalance > gameData.maxSafe) gameData.safeBalance = gameData.maxSafe;
+            }
+        }
+        calculateOfflineMining();
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            element.classList.add('active');
+            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
         }
 
-        function getCapCost() {
-            return +(5 * Math.pow(1.8, state.capLvl - 1)).toFixed(2);
-        }
-
-        function getMinedAmount() {
-            const secondsPassed = (Date.now() - state.lastClaim) / 1000;
-            const rawMined = secondsPassed * getRate();
-            return Math.min(rawMined, getMaxCap());
-        }
-
-        function saveState() {
-            localStorage.setItem('cybervault_save', JSON.stringify(state));
-        }
-
-        function tapVault() {
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            state.lastClaim -= 1000;
+        setInterval(() => {
+            let currentSpeed = getTotalSpeed();
+            if (gameData.safeBalance < gameData.maxSafe) {
+                gameData.safeBalance += currentSpeed;
+                if (gameData.safeBalance > gameData.maxSafe) gameData.safeBalance = gameData.maxSafe;
+            }
+            gameData.lastSaveTime = Date.now();
             updateUI();
+        }, 1000);
+
+        function updateUI() {
+            document.getElementById('balance').innerText = gameData.balance.toFixed(2);
+            document.getElementById('safe-balance').innerText = gameData.safeBalance.toFixed(4);
+            document.getElementById('current-speed-text').innerText = '+' + getTotalSpeed().toFixed(3) + ' / сек';
+            
+            let percent = (gameData.safeBalance / gameData.maxSafe) * 100;
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('progress-percent').innerText = Math.floor(percent) + '% (Макс: ' + gameData.maxSafe + ')';
+            document.getElementById('friends-count').innerText = gameData.friendsCount;
+
+            if (gameData.gpuOwned) {
+                document.getElementById('gpu-status').innerText = 'Активна';
+                document.getElementById('gpu-btn').innerText = 'Куплено';
+                document.getElementById('gpu-btn').disabled = true;
+                document.getElementById('gpu-btn').style.background = '#2a3447';
+            }
+            if (gameData.asicOwned) {
+                document.getElementById('asic-status').innerText = 'Активен';
+                document.getElementById('asic-btn').innerText = 'Куплено';
+                document.getElementById('asic-btn').disabled = true;
+                document.getElementById('asic-btn').style.background = '#2a3447';
+            }
+
+            localStorage.setItem('vlt_balance', gameData.balance);
+            localStorage.setItem('vlt_safe', gameData.safeBalance);
+            localStorage.setItem('vlt_speed', gameData.baseSpeed);
+            localStorage.setItem('vlt_gpu', gameData.gpuOwned);
+            localStorage.setItem('vlt_asic', gameData.asicOwned);
+            localStorage.setItem('vlt_last_time', gameData.lastSaveTime);
+            localStorage.setItem('vlt_friends', gameData.friendsCount);
+        }
+
+        function buyMiningRig(rigType, priceTon, speedBoost) {
+            let confirmBuy = confirm(`🏭 Активация доп. шахты!\nСтоимость: ${priceTon} TON/GRAM\nСредства будут переведены на кошелек разработчика.`);
+            if (confirmBuy) {
+                let payUrl = `ton://transfer/${OWNER_TON_WALLET}?amount=${priceTon * 1000000000}&text=CyberVault_${rigType.toUpperCase()}`;
+                
+                if (rigType === 'gpu') gameData.gpuOwned = true;
+                if (rigType === 'asic') gameData.asicOwned = true;
+
+                updateUI();
+                alert(`✅ Шахта успешно приобретена! Скорость добычи увеличена.`);
+
+                if (tg.openTelegramLink) tg.openTelegramLink(payUrl);
+                else window.open(payUrl, '_blank');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        function calculateSwap() {
+            let val = parseFloat(document.getElementById('swap-amount').value) || 0;
+            let tonRate = val * 0.0001;
+            document.getElementById('swap-result').innerText = `Получаешь ≈ ${tonRate.toFixed(3)} TON`;
+        }
+
+        function executeStonSwap() {
+            let val = parseFloat(document.getElementById('swap-amount').value);
+            if (isNaN(val) || val < 1000) { alert('⚠️ Мин. сумма для обмена: 1 000 $VLT'); return; }
+            if (val > gameData.balance) { alert('❌ Недостаточно средств!'); return; }
+
+            gameData.balance -= val;
+            updateUI();
+            let stonfiUrl = "https://app.ston.fi/swap";
+            alert(`✅ Свап ${val} $VLT запущен через STON.fi.`);
+            if (tg.openTelegramLink) tg.openTelegramLink(stonfiUrl);
+            else window.open(stonfiUrl, '_blank');
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        }
+
+        function connectTonkeeperWallet() {
+            let tonkeeperDeepLink = "tonkeeper://";
+            alert("🔗 Подключение Tonkeeper...");
+            if (tg.openTelegramLink) tg.openTelegramLink(tonkeeperDeepLink);
+            else window.open(tonkeeperDeepLink, '_blank');
         }
 
         function claimTokens() {
-            const mined = getMinedAmount();
-            if (mined < 0.01) return;
-
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            state.balance = +(state.balance + mined).toFixed(4);
-            state.lastClaim = Date.now();
-            saveState();
+            if (gameData.safeBalance < 0.05) return;
+            gameData.balance += gameData.safeBalance;
+            gameData.safeBalance = 0;
+            gameData.lastSaveTime = Date.now();
             updateUI();
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         }
 
-        function upgradeSpeed() {
-            const cost = getSpeedCost();
-            if (state.balance >= cost) {
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-                state.balance = +(state.balance - cost).toFixed(4);
-                state.speedLvl++;
-                saveState();
-                updateUI();
-            }
+        function requestWithdrawal() {
+            let wallet = document.getElementById('ton-wallet').value.trim();
+            let amount = parseFloat(document.getElementById('withdraw-amount').value);
+            if (!wallet || wallet.length < 10) { alert('⚠️ Введите корректный TON-кошелек!'); return; }
+            if (isNaN(amount) || amount < 5000) { alert('⚠️ Мин. сумма вывода: 5 000 $VLT'); return; }
+            if (amount > gameData.balance) { alert('❌ Недостаточно средств!'); return; }
+
+            localStorage.setItem('vlt_wallet', wallet);
+            gameData.balance -= amount;
+            updateUI();
+            alert(`✅ Запрос на вывод ${amount} $VLT отправлен!\nКошелек: ${wallet}`);
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         }
 
-        function upgradeCap() {
-            const cost = getCapCost();
-            if (state.balance >= cost) {
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-                state.balance = +(state.balance - cost).toFixed(4);
-                state.capLvl++;
-                saveState();
-                updateUI();
-            }
+        function inviteFriend() {
+            let userId = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : '12345';
+            let shareUrl = `https://t.me/share/url?url=https://t.me/vlt_vault_bot?start=${userId}&text=🚀 Запускай CyberVault Miner и майни крипту со мной!`;
+            if (tg.openTelegramLink) tg.openTelegramLink(shareUrl);
+            else window.open(shareUrl, '_blank');
         }
 
-        function updateUI() {
-            const mined = getMinedAmount();
-            const maxCap = getMaxCap();
-            const pct = Math.min(100, (mined / maxCap) * 100);
-            const speedCost = getSpeedCost();
-            const capCost = getCapCost();
-
-            document.getElementById('balance').innerText = state.balance.toFixed(2);
-            document.getElementById('mined').innerText = mined.toFixed(4);
-            document.getElementById('rate-display').innerText = getRate();
-            document.getElementById('max-cap').innerText = maxCap;
-            document.getElementById('storage-pct').innerText = Math.floor(pct);
-            document.getElementById('progress-bar').style.width = pct + '%';
-
-            document.getElementById('claim-btn').disabled = mined < 0.01;
-
-            document.getElementById('speed-lvl').innerText = state.speedLvl;
-            document.getElementById('speed-cost').innerText = speedCost;
-            document.getElementById('btn-speed').disabled = state.balance < speedCost;
-
-            document.getElementById('cap-lvl').innerText = state.capLvl;
-            document.getElementById('cap-cost').innerText = capCost;
-            document.getElementById('btn-cap').disabled = state.balance < capCost;
-        }
-
-        setInterval(updateUI, 100);
         updateUI();
     </script>
 </body>
