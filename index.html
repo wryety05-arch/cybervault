@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hamster Kombat</title>
+    <title>Hamster Kombat CEO</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         :root {
-            --bg-dark: #000000;
-            --sheet-bg: #1c1f24;
-            --card-bg: #272a2f;
-            --card-light: #32363c;
+            --bg-dark: #090b10;
+            --sheet-bg: #15181f;
+            --card-bg: #1e2129;
+            --card-border: rgba(243, 186, 47, 0.2);
             --gold-main: #f3ba2f;
-            --gold-grad: linear-gradient(180deg, #ffdf73 0%, #f3ba2f 50%, #c88a11 100%);
-            --blue-grad: linear-gradient(180deg, #5d78ff 0%, #2a3990 100%);
+            --gold-grad: linear-gradient(180deg, #ffe596 0%, #f3ba2f 50%, #b87c05 100%);
+            --orange-glow: rgba(243, 186, 47, 0.15);
             --text-main: #ffffff;
-            --text-muted: #8b8e93;
+            --text-muted: #848a96;
         }
 
         * {
@@ -35,36 +35,48 @@
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+            /* Космическо-искрящийся фон как в Hamster Kombat */
+            background-image: 
+                radial-gradient(circle at 50% -20%, rgba(243, 186, 47, 0.25) 0%, transparent 60%),
+                radial-gradient(circle at 10% 40%, rgba(93, 120, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.08) 0%, transparent 50%);
         }
 
-        /* Верхняя черная шапка профиля */
+        /* Шапка */
         .top-user-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px 18px;
-            background: #000000;
+            padding: 12px 16px 14px;
+            background: rgba(9, 11, 16, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 10;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 4px 12px 4px 4px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 10px;
-            background: #272a2f;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--gold-grad);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 13px;
+            box-shadow: 0 0 10px rgba(243, 186, 47, 0.4);
         }
 
         .user-name {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
         }
 
@@ -72,59 +84,51 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            background: #1c1f24;
-            padding: 6px 12px;
+            background: rgba(255, 186, 47, 0.08);
+            border: 1px solid rgba(255, 186, 47, 0.2);
+            padding: 5px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
-            border: 1px solid rgba(255,255,255,0.08);
         }
 
-        /* Основной корпус с фирменным золотым ободком сверху как в Hamster Kombat */
+        /* Главный лист-оболочка */
         .main-sheet {
             flex: 1;
             background: var(--sheet-bg);
-            border-top: 2px solid var(--gold-main);
+            border-top: 3px solid #ffe596;
             border-radius: 36px 36px 0 0;
-            box-shadow: 0 -10px 35px rgba(243, 186, 47, 0.28);
+            box-shadow: 0 -15px 40px rgba(243, 186, 47, 0.25), inset 0 1px 0 rgba(255,255,255,0.1);
             padding: 16px 16px 85px;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
-        .tab-view {
-            display: none;
-            animation: fadeIn 0.2s ease;
-        }
-
-        .tab-view.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* 3 плашки сверху (Прибыль за тап / Для апа / Прибыль в час) */
+        /* 3 плашки статистики */
         .top-stats-3 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .stat-pill {
             background: var(--card-bg);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 8px 4px;
             text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         }
 
         .stat-pill-label {
-            font-size: 10px;
-            font-weight: 600;
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-muted);
             margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .stat-pill-val {
@@ -133,42 +137,53 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 3px;
         }
 
-        /* Счетчик монет */
+        /* Счётчик монет (Баланс) */
         .balance-display {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin: 6px 0 12px;
+            margin: 8px 0 14px;
         }
 
-        .coin-svg {
+        /* 3D монета возле баланса */
+        .coin-3d {
             width: 38px;
             height: 38px;
             border-radius: 50%;
-            background: var(--gold-grad);
+            background: radial-gradient(circle at 35% 35%, #fff5cc 0%, #f3ba2f 40%, #875b00 95%);
+            box-shadow: 
+                0 4px 15px rgba(243, 186, 47, 0.5),
+                inset -2px -2px 5px rgba(0,0,0,0.4),
+                inset 2px 2px 5px rgba(255,255,255,0.6);
+            border: 2.5px solid #ffdf73;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            color: #7a4b00;
-            font-size: 20px;
-            box-shadow: 0 2px 10px rgba(243, 186, 47, 0.4);
-            border: 2px solid #fff3b0;
+            font-size: 22px;
+            color: #5c3b00;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+            position: relative;
         }
 
         .balance-number {
-            font-size: 38px;
-            font-weight: 900;
+            font-size: 40px;
+            font-weight: 950;
             letter-spacing: -0.5px;
+            background: linear-gradient(180deg, #ffffff 40%, #e0e0e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
 
         /* Шкала лиги */
         .league-bar-wrap {
-            margin-bottom: 18px;
+            margin-bottom: 22px;
+            padding: 0 4px;
         }
 
         .league-header {
@@ -182,7 +197,7 @@
         .league-track {
             width: 100%;
             height: 8px;
-            background: #272a2f;
+            background: #111317;
             border-radius: 10px;
             overflow: hidden;
             border: 1px solid rgba(255,255,255,0.05);
@@ -191,36 +206,53 @@
         .league-fill {
             height: 100%;
             width: 2%;
-            background: linear-gradient(90deg, #74c69d, #f3ba2f, #ff7b00);
+            background: linear-gradient(90deg, #74c69d 0%, #f3ba2f 60%, #ff5e00 100%);
             border-radius: 10px;
-            transition: width 0.2s ease;
         }
 
-        /* Главный круг с хомяком */
+        /* Главная кнопка-круг с хомяком */
         .tap-circle-outer {
-            width: 250px;
-            height: 250px;
-            margin: 6px auto 18px;
+            width: 258px;
+            height: 258px;
+            margin: 8px auto 20px;
             border-radius: 50%;
-            background: radial-gradient(circle, #3d52c9 0%, #19225c 70%, #0f1438 100%);
-            padding: 12px;
-            box-shadow: 0 12px 35px rgba(42, 57, 144, 0.6), inset 0 2px 10px rgba(255,255,255,0.2);
+            /* Объемный золотисто-огненный обод */
+            background: radial-gradient(circle, #e08316 0%, #a84700 45%, #421600 75%, #150600 100%);
+            padding: 14px;
+            box-shadow: 
+                0 18px 45px rgba(168, 71, 0, 0.55),
+                inset 0 4px 15px rgba(255, 255, 255, 0.25),
+                inset 0 -4px 15px rgba(0, 0, 0, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.06s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: transform 0.06s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .tap-circle-outer::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd56b, transparent, #b05c00);
+            z-index: -1;
+            opacity: 0.6;
         }
 
         .tap-circle-outer:active {
-            transform: scale(0.95);
+            transform: scale(0.94);
         }
 
         .tap-circle-inner {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: radial-gradient(circle at 50% 35%, #4c66f5 0%, #1a246b 85%);
+            background: radial-gradient(circle at 50% 30%, #4459d4 0%, #171d54 65%, #0a0d2a 100%);
+            box-sizing: border-box;
+            border: 4px solid #1a1e29;
+            box-shadow: inset 0 2px 10px rgba(255,255,255,0.15), 0 4px 12px rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -228,14 +260,29 @@
             position: relative;
         }
 
-        /* Нижняя панель энергии и буста */
+        /* Объемный анимированный 3D Хомяк-СЕО */
+        .hamster-illustration {
+            width: 180px;
+            height: 180px;
+            transform: translateY(6px);
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6));
+        }
+
+        /* 3D Эффекты для хомяка */
+        .hamster-body { fill: url(#body-grad); }
+        .hamster-belly { fill: url(#belly-grad); }
+        .hamster-ear-inner { fill: url(#ear-grad); }
+        .hamster-cheek { fill: url(#cheek-grad); }
+        .suit { fill: url(#suit-grad); }
+
+        /* Нижний ряд энергии и буста */
         .energy-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 6px;
+            padding: 0 8px;
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 800;
         }
 
         .energy-left {
@@ -251,11 +298,27 @@
             background: none;
             border: none;
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
         }
 
-        /* Карточки Mine */
+        /* Плавное появление страниц */
+        .tab-view {
+            display: none;
+            animation: fadeIn 0.22s ease-out;
+        }
+
+        .tab-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Карточки улучшения Mine */
         .mine-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -265,72 +328,82 @@
         .mine-card {
             background: var(--card-bg);
             border-radius: 16px;
-            padding: 12px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.03);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            transition: transform 0.1s ease;
         }
 
         .mine-card:active {
-            background: var(--card-light);
+            transform: scale(0.97);
+            background: #232731;
         }
 
         .mine-top {
             display: flex;
             gap: 10px;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
-        .mine-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: #32363c;
+        .mine-icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #2b303b;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
+            font-size: 22px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: inset 0 1px 3px rgba(255,255,255,0.1);
         }
 
         .mine-bottom {
-            border-top: 1px solid rgba(255,255,255,0.07);
-            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 800;
         }
 
-        .btn-gold {
+        .btn-gold-action {
             width: 100%;
             padding: 15px;
-            border-radius: 14px;
+            border-radius: 16px;
             border: none;
             background: var(--gold-grad);
-            color: #1c1f24;
-            font-weight: 800;
+            color: #0d0f14;
+            font-weight: 900;
             font-size: 15px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(243, 186, 47, 0.35);
+            box-shadow: 0 5px 18px rgba(243, 186, 47, 0.4);
         }
 
-        /* Плавающая нижняя панель навигации как в Hamster Kombat */
+        .btn-gold-action:active {
+            opacity: 0.9;
+            transform: scale(0.98);
+        }
+
+        /* Навигационная панель */
         .bottom-nav-wrap {
             position: fixed;
-            bottom: 10px;
+            bottom: 12px;
             left: 12px;
             right: 12px;
-            background: #272a2f;
-            border-radius: 18px;
+            background: #1f222a;
+            border-radius: 20px;
             padding: 6px;
             display: flex;
             justify-content: space-between;
             z-index: 1000;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.7);
             border: 1px solid rgba(255,255,255,0.06);
         }
 
@@ -340,19 +413,19 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 6px 2px;
-            border-radius: 12px;
+            padding: 8px 2px;
+            border-radius: 14px;
             background: none;
             border: none;
             color: var(--text-muted);
             font-size: 10px;
-            font-weight: 600;
+            font-weight: 700;
             gap: 3px;
             cursor: pointer;
         }
 
         .nav-tab.active {
-            background: #1c1f24;
+            background: #15181f;
             color: #ffffff;
         }
 
@@ -362,21 +435,24 @@
             fill: currentColor;
         }
 
-        /* Всплывающая цифра +1 */
-        .float-num {
+        /* Вылетающая цифра тапа +1 (объемная с тенью) */
+        .float-tap-num {
             position: fixed;
-            font-size: 26px;
-            font-weight: 900;
+            font-size: 28px;
+            font-weight: 950;
             color: #ffffff;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            text-shadow: 
+                0 4px 8px rgba(0,0,0,0.8),
+                0 0 10px rgba(243, 186, 47, 0.5);
             pointer-events: none;
             z-index: 9999;
-            animation: floatUp 0.7s ease-out forwards;
+            animation: floatFlyUp 0.65s cubic-bezier(0.25, 1, 0.50, 1) forwards;
         }
 
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-75px) scale(1.1); }
+        @keyframes floatFlyUp {
+            0% { opacity: 1; transform: translateY(0) scale(0.8) rotate(-5deg); }
+            50% { opacity: 1; transform: translateY(-40px) scale(1.15) rotate(5deg); }
+            100% { opacity: 0; transform: translateY(-80px) scale(0.9) rotate(0deg); }
         }
 
         #ton-connect-button {
@@ -388,48 +464,48 @@
 </head>
 <body>
 
-    <!-- ЧЕРНАЯ ШАПКА ПРОФИЛЯ -->
+    <!-- ШАПКА -->
     <div class="top-user-bar">
         <div class="user-info">
             <div class="user-avatar">🐹</div>
             <div class="user-name">Артур (CEO)</div>
         </div>
         <div class="exchange-badge">
-            <span style="color: #f3ba2f;">❖</span>
+            <span style="color: #f3ba2f; text-shadow: 0 0 5px rgba(243,186,47,0.5);">❖</span>
             <span>Binance</span>
         </div>
     </div>
 
-    <!-- ОСНОВНОЙ КОНТЕЙНЕР С ЗОЛОТЫМ СВЕЧЕНИЕМ -->
+    <!-- КОНТЕНТ С ЗОЛОТЫМ ОТЛИВОМ -->
     <div class="main-sheet">
 
-        <!-- 1. ВКЛАДКА EXCHANGE (БИРЖА) -->
+        <!-- 1. EXCHANGE (ТАПАТЕЛЬ) -->
         <div id="view-home" class="tab-view active">
             <div class="top-stats-3">
                 <div class="stat-pill">
-                    <div class="stat-pill-label" style="color: #f79841;">Прибыль за тап</div>
+                    <div class="stat-pill-label" style="color: #ff9f43;">Прибыль за тап</div>
                     <div class="stat-pill-val"><span style="color:#f3ba2f;">🪙</span> +<span id="ui-tap-val">1</span></div>
                 </div>
                 <div class="stat-pill">
-                    <div class="stat-pill-label" style="color: #6f72e2;">Монет для апа</div>
+                    <div class="stat-pill-label" style="color: #82a5fc;">Для апа</div>
                     <div class="stat-pill-val">5K</div>
                 </div>
                 <div class="stat-pill">
-                    <div class="stat-pill-label" style="color: #84cb69;">Прибыль в час</div>
+                    <div class="stat-pill-label" style="color: #7bed9f;">Прибыль в час</div>
                     <div class="stat-pill-val"><span style="color:#f3ba2f;">🪙</span> +<span id="ui-profit">0</span></div>
                 </div>
             </div>
 
             <!-- Баланс -->
             <div class="balance-display">
-                <div class="coin-svg">$</div>
+                <div class="coin-3d">$</div>
                 <div class="balance-number" id="ui-balance">0</div>
             </div>
 
             <!-- Лига -->
             <div class="league-bar-wrap">
                 <div class="league-header">
-                    <span>Bronze ›</span>
+                    <span style="color: #f3ba2f;">Bronze 🥉 ›</span>
                     <span style="color: var(--text-muted);">Level <span id="ui-lvl">1</span>/10</span>
                 </div>
                 <div class="league-track">
@@ -437,33 +513,86 @@
                 </div>
             </div>
 
-            <!-- Кнопка Хомяка CEO в костюме -->
+            <!-- Интерактивная 3D кнопка Хомяка-CEO -->
             <div class="tap-circle-outer" onclick="tapHamster(event)">
                 <div class="tap-circle-inner">
-                    <svg viewBox="0 0 200 200" width="195" height="195">
-                        <!-- Уши -->
-                        <circle cx="58" cy="52" r="22" fill="#c97a3d"/>
-                        <circle cx="58" cy="52" r="13" fill="#f4a28c"/>
-                        <circle cx="142" cy="52" r="22" fill="#c97a3d"/>
-                        <circle cx="142" cy="52" r="13" fill="#f4a28c"/>
-                        <!-- Голова и щеки -->
-                        <ellipse cx="100" cy="95" rx="58" ry="52" fill="#e09145"/>
-                        <ellipse cx="64" cy="108" rx="22" ry="18" fill="#f7c08a"/>
-                        <ellipse cx="136" cy="108" rx="22" ry="18" fill="#f7c08a"/>
-                        <ellipse cx="100" cy="104" rx="26" ry="22" fill="#fff0db"/>
-                        <!-- Глаза -->
-                        <circle cx="78" cy="82" r="8" fill="#1a1a1a"/>
-                        <circle cx="80" cy="79" r="3" fill="#ffffff"/>
-                        <circle cx="122" cy="82" r="8" fill="#1a1a1a"/>
-                        <circle cx="124" cy="79" r="3" fill="#ffffff"/>
-                        <!-- Нос и рот -->
-                        <ellipse cx="100" cy="94" rx="8" ry="5" fill="#ff758f"/>
-                        <path d="M90 104 Q100 113 110 104" stroke="#5c3317" stroke-width="3" fill="none" stroke-linecap="round"/>
-                        <rect x="95" y="106" width="10" height="7" rx="2" fill="#ffffff"/>
-                        <!-- Деловой костюм CEO и галстук -->
-                        <path d="M40 190 C40 145, 160 145, 160 190 Z" fill="#1e2229"/>
-                        <polygon points="82,145 118,145 100,185" fill="#ffffff"/>
-                        <polygon points="95,147 105,147 108,175 100,185 92,175" fill="#e63946"/>
+                    <!-- Детализированный 3D хомяк-CEO (векторы с градиентами, тенями и костюмом) -->
+                    <svg class="hamster-illustration" viewBox="0 0 200 200">
+                        <defs>
+                            <!-- Градиенты для 3D-эффекта пушистости и объема -->
+                            <radialGradient id="body-grad" cx="50%" cy="40%" r="50%">
+                                <stop offset="0%" stop-color="#f5b263"/>
+                                <stop offset="65%" stop-color="#cb701b"/>
+                                <stop offset="100%" stop-color="#8c3d00"/>
+                            </radialGradient>
+                            <radialGradient id="belly-grad" cx="50%" cy="30%" r="50%">
+                                <stop offset="0%" stop-color="#fff8f0"/>
+                                <stop offset="70%" stop-color="#f7d0a2"/>
+                                <stop offset="100%" stop-color="#d6a065"/>
+                            </radialGradient>
+                            <radialGradient id="ear-grad" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#ffa085"/>
+                                <stop offset="70%" stop-color="#e26a4f"/>
+                                <stop offset="100%" stop-color="#ad3e26"/>
+                            </radialGradient>
+                            <radialGradient id="cheek-grad" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#fff4e8"/>
+                                <stop offset="85%" stop-color="#f5bc7f"/>
+                                <stop offset="100%" stop-color="#cf8e44"/>
+                            </radialGradient>
+                            <linearGradient id="suit-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#2a3240"/>
+                                <stop offset="50%" stop-color="#181d26"/>
+                                <stop offset="100%" stop-color="#0b0e12"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Задние уши -->
+                        <circle cx="58" cy="50" r="23" fill="#8c3d00"/>
+                        <circle cx="58" cy="50" r="14" class="hamster-ear-inner"/>
+                        <circle cx="142" cy="50" r="23" fill="#8c3d00"/>
+                        <circle cx="142" cy="50" r="14" class="hamster-ear-inner"/>
+                        
+                        <!-- Голова (Объемные щеки) -->
+                        <ellipse cx="100" cy="95" rx="58" ry="52" class="hamster-body"/>
+                        <!-- Светлые щечки по бокам -->
+                        <ellipse cx="62" cy="112" rx="23" ry="17" class="hamster-cheek"/>
+                        <ellipse cx="138" cy="112" rx="23" ry="17" class="hamster-cheek"/>
+                        <!-- Светлая мордочка по центру -->
+                        <ellipse cx="100" cy="106" rx="25" ry="20" class="hamster-belly"/>
+
+                        <!-- Блики и тени на щеках -->
+                        <ellipse cx="50" cy="108" rx="7" ry="4" fill="#ffffff" opacity="0.15"/>
+                        <ellipse cx="150" cy="108" rx="7" ry="4" fill="#ffffff" opacity="0.15"/>
+
+                        <!-- Глаза с 3D-бликами -->
+                        <circle cx="78" cy="80" r="8.5" fill="#111111"/>
+                        <circle cx="81" cy="77" r="3.5" fill="#ffffff"/>
+                        <circle cx="76" cy="83" r="1" fill="#ffffff" opacity="0.8"/>
+                        
+                        <circle cx="122" cy="80" r="8.5" fill="#111111"/>
+                        <circle cx="125" cy="77" r="3.5" fill="#ffffff"/>
+                        <circle cx="120" cy="83" r="1" fill="#ffffff" opacity="0.8"/>
+
+                        <!-- Носик и улыбка -->
+                        <path d="M100 87 L96 92 C96 92 98 94 100 94 C102 94 104 92 104 92 Z" fill="#ff6b8b"/>
+                        <path d="M91 101 C95 106 100 106 100 102 C100 106 105 106 109 101" stroke="#522700" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        
+                        <!-- Передние зубы -->
+                        <rect x="96" y="103" width="8" height="6" rx="1.5" fill="#ffffff"/>
+                        <line x1="100" y1="103" x2="100" y2="109" stroke="#cccccc" stroke-width="0.8"/>
+
+                        <!-- Костюм CEO (детализированный, с воротником и красным галстуком) -->
+                        <path d="M38 185 C38 138, 162 138, 162 185 Z" class="suit"/>
+                        <!-- Белая рубашка -->
+                        <polygon points="80,140 120,140 100,180" fill="#ffffff"/>
+                        <!-- Воротник пиджака -->
+                        <path d="M38 185 L76 142 L84 156 L68 185 Z" fill="#181d26" stroke="#2a3240" stroke-width="1"/>
+                        <path d="M162 185 L124 142 L116 156 L132 185 Z" fill="#181d26" stroke="#2a3240" stroke-width="1"/>
+                        <!-- Красный галстук-галстук -->
+                        <polygon points="96,143 104,143 106,172 100,182 94,172" fill="#e63946"/>
+                        <!-- Золотой значок на лацкане -->
+                        <circle cx="68" cy="158" r="3" fill="#f3ba2f"/>
+                        <circle cx="68" cy="158" r="1.5" fill="#fff5cc"/>
                     </svg>
                 </div>
             </div>
@@ -471,135 +600,135 @@
             <!-- Энергия и Буст -->
             <div class="energy-row">
                 <div class="energy-left">
-                    <span style="color: #f3ba2f; font-size: 18px;">⚡</span>
+                    <span style="color: #f3ba2f; font-size: 20px; filter: drop-shadow(0 0 5px rgba(243,186,47,0.5));">⚡</span>
                     <span><span id="ui-energy">1000</span> / 1000</span>
                 </div>
                 <button class="boost-btn" onclick="fullEnergy()">
                     <span style="font-size: 18px;">🚀</span>
-                    <span>Boost</span>
+                    <span style="color: #f3ba2f;">Boost</span>
                 </button>
             </div>
         </div>
 
-        <!-- 2. ВКЛАДКА MINE (ПРОКАЧКА КАРТ) -->
+        <!-- 2. MINE (ПРОКАЧКА КАРТ) -->
         <div id="view-mine" class="tab-view">
-            <div class="balance-display" style="margin-bottom: 16px;">
-                <div class="coin-svg">$</div>
+            <div class="balance-display" style="margin-bottom: 20px;">
+                <div class="coin-3d">$</div>
                 <div class="balance-number" id="ui-balance-mine">0</div>
             </div>
 
             <div class="mine-grid">
                 <div class="mine-card" onclick="buyCard(250, 120, 'Fan tokens', 'card1')">
                     <div class="mine-top">
-                        <div class="mine-icon">🎟️</div>
+                        <div class="mine-icon-box">🎟️</div>
                         <div>
-                            <div style="font-size: 12px; font-weight: 700;">Fan tokens</div>
-                            <div style="font-size: 10px; color: var(--text-muted);">Прибыль в час</div>
-                            <div style="font-size: 11px; font-weight: 700; color: #f3ba2f;">+120</div>
+                            <div style="font-size: 13px; font-weight: 800;">Fan tokens</div>
+                            <div style="font-size: 10px; color: var(--text-muted); margin-top: 1px;">Прибыль в час</div>
+                            <div style="font-size: 11px; font-weight: 800; color: #7bed9f;">+120</div>
                         </div>
                     </div>
                     <div class="mine-bottom">
                         <span style="color: var(--text-muted);">lvl <span id="card1-lvl">0</span></span>
-                        <span>🪙 250</span>
+                        <span style="color: #f3ba2f;">🪙 250</span>
                     </div>
                 </div>
 
                 <div class="mine-card" onclick="buyCard(500, 280, 'Staking', 'card2')">
                     <div class="mine-top">
-                        <div class="mine-icon">📈</div>
+                        <div class="mine-icon-box">📈</div>
                         <div>
-                            <div style="font-size: 12px; font-weight: 700;">Staking</div>
-                            <div style="font-size: 10px; color: var(--text-muted);">Прибыль в час</div>
-                            <div style="font-size: 11px; font-weight: 700; color: #f3ba2f;">+280</div>
+                            <div style="font-size: 13px; font-weight: 800;">Staking</div>
+                            <div style="font-size: 10px; color: var(--text-muted); margin-top: 1px;">Прибыль в час</div>
+                            <div style="font-size: 11px; font-weight: 800; color: #7bed9f;">+280</div>
                         </div>
                     </div>
                     <div class="mine-bottom">
                         <span style="color: var(--text-muted);">lvl <span id="card2-lvl">0</span></span>
-                        <span>🪙 500</span>
+                        <span style="color: #f3ba2f;">🪙 500</span>
                     </div>
                 </div>
 
                 <div class="mine-card" onclick="buyCard(1000, 600, 'BTC pairs', 'card3')">
                     <div class="mine-top">
-                        <div class="mine-icon">₿</div>
+                        <div class="mine-icon-box">₿</div>
                         <div>
-                            <div style="font-size: 12px; font-weight: 700;">BTC pairs</div>
-                            <div style="font-size: 10px; color: var(--text-muted);">Прибыль в час</div>
-                            <div style="font-size: 11px; font-weight: 700; color: #f3ba2f;">+600</div>
+                            <div style="font-size: 13px; font-weight: 800;">BTC pairs</div>
+                            <div style="font-size: 10px; color: var(--text-muted); margin-top: 1px;">Прибыль в час</div>
+                            <div style="font-size: 11px; font-weight: 800; color: #7bed9f;">+600</div>
                         </div>
                     </div>
                     <div class="mine-bottom">
                         <span style="color: var(--text-muted);">lvl <span id="card3-lvl">0</span></span>
-                        <span>🪙 1 000</span>
+                        <span style="color: #f3ba2f;">🪙 1 000</span>
                     </div>
                 </div>
 
                 <div class="mine-card" onclick="buyCard(2500, 1500, 'TON + Hamster', 'card4')">
                     <div class="mine-top">
-                        <div class="mine-icon">💎</div>
+                        <div class="mine-icon-box">💎</div>
                         <div>
-                            <div style="font-size: 12px; font-weight: 700;">TON + Hamster</div>
-                            <div style="font-size: 10px; color: var(--text-muted);">Прибыль в час</div>
-                            <div style="font-size: 11px; font-weight: 700; color: #f3ba2f;">+1 500</div>
+                            <div style="font-size: 13px; font-weight: 800;">TON + Hamster</div>
+                            <div style="font-size: 10px; color: var(--text-muted); margin-top: 1px;">Прибыль в час</div>
+                            <div style="font-size: 11px; font-weight: 800; color: #7bed9f;">+1 500</div>
                         </div>
                     </div>
                     <div class="mine-bottom">
                         <span style="color: var(--text-muted);">lvl <span id="card4-lvl">0</span></span>
-                        <span>🪙 2 500</span>
+                        <span style="color: #f3ba2f;">🪙 2 500</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. ВКЛАДКА FRIENDS -->
+        <!-- 3. FRIENDS -->
         <div id="view-friends" class="tab-view">
-            <div style="text-align: center; margin-bottom: 16px;">
+            <div style="text-align: center; margin-bottom: 22px;">
                 <h2 style="font-size: 22px; margin-bottom: 4px;">Пригласите друзей!</h2>
                 <p style="font-size: 12px; color: var(--text-muted);">Вы и ваш друг получите бонусы</p>
             </div>
-            <div style="background: var(--card-bg); border-radius: 16px; padding: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
-                <div style="font-size: 28px;">🎁</div>
+            <div style="background: var(--card-bg); border-radius: 18px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 14px; border: 1px solid rgba(255,255,255,0.03);">
+                <div style="font-size: 32px; filter: drop-shadow(0 0 5px rgba(243,186,47,0.3));">🎁</div>
                 <div>
-                    <div style="font-size: 13px; font-weight: 700;">Пригласить друга</div>
-                    <div style="font-size: 12px; color: #f3ba2f; font-weight: 700;">+5 000 <span style="color: var(--text-muted); font-weight: 400;">для вас и вашего друга</span></div>
+                    <div style="font-size: 14px; font-weight: 800;">Пригласить друга</div>
+                    <div style="font-size: 12px; color: #f3ba2f; font-weight: 800;">+5 000 <span style="color: var(--text-muted); font-weight: 400;">для вас и вашего друга</span></div>
                 </div>
             </div>
-            <button class="btn-gold" onclick="copyRef()">Пригласить друга</button>
+            <button class="btn-gold-action" onclick="copyRef()">Пригласить друга</button>
         </div>
 
-        <!-- 4. ВКЛАДКА EARN -->
+        <!-- 4. EARN -->
         <div id="view-earn" class="tab-view">
-            <div style="text-align: center; margin-bottom: 16px;">
-                <div style="font-size: 46px; margin-bottom: 6px;">🪙</div>
-                <h2 style="font-size: 22px;">Заработайте больше монет</h2>
+            <div style="text-align: center; margin-bottom: 22px;">
+                <div style="font-size: 48px; filter: drop-shadow(0 4px 10px rgba(243,186,47,0.35));">🪙</div>
+                <h2 style="font-size: 22px; margin-top: 4px;">Заработайте больше монет</h2>
             </div>
-            <div style="background: var(--card-bg); border-radius: 16px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;" onclick="claimDaily(this)">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="font-size: 26px;">📅</div>
+            <div style="background: var(--card-bg); border-radius: 18px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.03); cursor: pointer;" onclick="claimDaily(this)">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div style="font-size: 28px;">📅</div>
                     <div>
-                        <div style="font-size: 13px; font-weight: 700;">Ежедневная награда</div>
-                        <div style="font-size: 12px; color: #f3ba2f; font-weight: 700;">+5 000</div>
+                        <div style="font-size: 14px; font-weight: 800;">Ежедневная награда</div>
+                        <div style="font-size: 12px; color: #f3ba2f; font-weight: 800;">+5 000</div>
                     </div>
                 </div>
-                <span style="color: var(--text-muted);">›</span>
+                <span style="color: var(--text-muted); font-size: 18px;">›</span>
             </div>
         </div>
 
-        <!-- 5. ВКЛАДКА AIRDROP (КОШЕЛЕК TON) -->
+        <!-- 5. AIRDROP (КОШЕЛЕК TON) -->
         <div id="view-wallet" class="tab-view">
-            <div style="text-align: center; margin-bottom: 16px;">
-                <div style="font-size: 50px; margin-bottom: 8px;">🐹</div>
+            <div style="text-align: center; margin-bottom: 22px;">
+                <div style="font-size: 52px; filter: drop-shadow(0 6px 15px rgba(243,186,47,0.3));">🐹</div>
                 <h2 style="font-size: 22px; margin-bottom: 6px;">Airdrop</h2>
                 <p style="font-size: 12px; color: var(--text-muted);">Подключите ваш кошелек TON для участия в листинге и транзакциях</p>
             </div>
-            <div style="background: var(--card-bg); border-radius: 16px; padding: 16px; text-align: center;">
+            <div style="background: var(--card-bg); border-radius: 18px; padding: 18px; text-align: center; border: 1px solid rgba(255,255,255,0.03);">
                 <div id="ton-connect-button"></div>
             </div>
         </div>
 
     </div>
 
-    <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ HAMSTER KOMBAT -->
+    <!-- НАВИГАЦИЯ -->
     <div class="bottom-nav-wrap">
         <button class="nav-tab active" id="nav-home" onclick="switchTab('home')">
             <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
@@ -624,13 +753,13 @@
     </div>
 
     <script>
-        // ВАШ ВСТРОЕННЫЙ КОШЕЛЕК:
+        // ВАШ ВСТРОЕННЫЙ КОШЕЛЕК ДЛЯ ПОЛУЧЕНИЯ ТРАНЗАКЦИЙ:
         const MY_WALLET_ADDRESS = "UQD1yWfSHDBQfdsHSMbxQZ4ENGCfqRMSJpnit1zMfTxVVoB1";
 
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
-            window.Telegram.WebApp.setHeaderColor('#000000');
+            window.Telegram.WebApp.setHeaderColor('#090b10');
         }
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -639,6 +768,7 @@
         });
         tonConnectUI.uiOptions = { buttonRootId: 'ton-connect-button' };
 
+        // Обнуленные стартовые показатели
         let balance = 0;
         let profitPerHour = 0;
         let energy = 1000;
@@ -668,6 +798,7 @@
             document.getElementById('league-fill').style.width = pct + '%';
         }
 
+        // Клик с красивым вылетом +1
         function tapHamster(e) {
             if (energy < tapPower) return;
             energy -= tapPower;
@@ -679,12 +810,12 @@
             }
 
             const num = document.createElement('div');
-            num.className = 'float-num';
+            num.className = 'float-tap-num';
             num.innerText = '+' + tapPower;
             num.style.left = (e.clientX - 15) + 'px';
             num.style.top = (e.clientY - 30) + 'px';
             document.body.appendChild(num);
-            setTimeout(() => num.remove(), 700);
+            setTimeout(() => num.remove(), 600);
         }
 
         function fullEnergy() {
