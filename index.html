@@ -3,707 +3,735 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CyberVault Miner</title>
+    <title>CyberVault Miner — Web3 Mini App</title>
+    <!-- Официальные скрипты Telegram WebApp и TonConnect UI -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap');
+        :root {
+            --bg-color: #0b0e17;
+            --card-bg: rgba(20, 25, 42, 0.78);
+            --card-border: rgba(138, 43, 226, 0.25);
+            --primary-grad: linear-gradient(135deg, #8a2be2 0%, #00d2ff 100%);
+            --accent-purple: #9d4edd;
+            --accent-cyan: #00f2fe;
+            --text-main: #ffffff;
+            --text-muted: #8b9bb4;
+        }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Rajdhani', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-main);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
+
         body {
-            background-color: #05070c;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
+            background-color: var(--bg-color);
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(0, 243, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 10% 100%, rgba(138, 43, 226, 0.08) 0%, transparent 50%),
-                linear-gradient(rgba(5,7,12,0.9), rgba(5,7,12,0.9));
+                radial-gradient(circle at 50% -10%, rgba(138, 43, 226, 0.35) 0%, transparent 60%),
+                radial-gradient(circle at 85% 30%, rgba(0, 210, 255, 0.12) 0%, transparent 50%);
+            min-height: 100vh;
+            padding-bottom: 85px;
         }
-        .header {
+
+        /* Верхняя панель (Header) */
+        .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            background: rgba(10, 14, 25, 0.95);
+            background: rgba(11, 14, 23, 0.85);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
-        .user-info {
+
+        .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 16px;
         }
-        .coin-logo {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, #00f3ff, #8a2be2);
-            border-radius: 10px;
+
+        .brand-logo {
+            padding: 4px 8px;
+            border-radius: 8px;
+            background: var(--primary-grad);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 14px;
-            color: #05070c;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .username {
-            font-size: 15px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        .version {
-            font-size: 10px;
-            font-family: 'Orbitron', sans-serif;
-            color: #00f3ff;
-            background: rgba(0, 243, 255, 0.1);
-            padding: 4px 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(0, 243, 255, 0.3);
-        }
-        .content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px 14px 80px 14px;
-            display: none;
-            gap: 10px;
-        }
-        .content.active {
-            display: flex;
-            flex-direction: column;
-        }
-        .card-box {
-            background: linear-gradient(145deg, rgba(13, 18, 30, 0.95), rgba(7, 10, 18, 0.95));
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            border-radius: 14px;
-            padding: 12px 14px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-        }
-        .card-row-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .vault-banner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: linear-gradient(135deg, rgba(0,243,255,0.1), rgba(138,43,226,0.15));
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            border-radius: 12px;
-            padding: 10px 12px;
-        }
-        .badge-tep {
-            font-size: 9px;
-            font-family: 'Orbitron', sans-serif;
-            background: rgba(0, 243, 255, 0.2);
-            color: #00f3ff;
-            padding: 2px 6px;
-            border-radius: 4px;
-            border: 1px solid rgba(0, 243, 255, 0.4);
-            margin-left: 6px;
-        }
-        .btn-small-cyber {
-            background: linear-gradient(135deg, #00f3ff, #0088ff);
-            color: #05070c;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            font-size: 11px;
-            cursor: pointer;
-            box-shadow: 0 0 12px rgba(0, 243, 255, 0.4);
-        }
-        .balance-label {
-            font-size: 10px;
-            color: #8b9bb4;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Orbitron', sans-serif;
-            display: flex;
-            justify-content: space-between;
-        }
-        .balance-val {
-            font-size: 26px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            color: #00f3ff;
-            margin-top: 2px;
-            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
-        }
-        .mining-status {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            color: #00ff88;
-            font-family: 'Orbitron', sans-serif;
-        }
-        .mining-dot {
-            width: 8px;
-            height: 8px;
-            background: #00ff88;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #00ff88;
-        }
-        .mining-amount {
-            font-size: 24px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            color: #ffffff;
-            margin: 6px 0;
-        }
-        .progress-bar-bg {
-            width: 100%;
-            height: 6px;
-            background: #030508;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 8px 0 4px 0;
-            border: 1px solid rgba(0, 243, 255, 0.2);
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00f3ff, #8a2be2);
-            width: 0%;
-            box-shadow: 0 0 10px #00f3ff;
-        }
-        .progress-info-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            color: #8b9bb4;
-            font-family: 'Orbitron', sans-serif;
-        }
-        .btn-claim {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #00f3ff, #8a2be2);
-            border: none;
-            border-radius: 12px;
-            color: #05070c;
-            font-family: 'Orbitron', sans-serif;
             font-weight: 900;
             font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(0, 243, 255, 0.4);
-            margin: 10px 0;
+            box-shadow: 0 0 12px rgba(138, 43, 226, 0.5);
         }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+
+        .top-controls {
+            display: flex;
+            align-items: center;
             gap: 8px;
         }
-        .stat-card {
-            background: rgba(10, 14, 25, 0.8);
-            border: 1px solid rgba(0, 243, 255, 0.15);
-            border-radius: 10px;
-            padding: 8px;
-            text-align: center;
-        }
-        .stat-title {
-            font-size: 9px;
-            color: #8b9bb4;
-            font-family: 'Orbitron', sans-serif;
-            margin-bottom: 3px;
-        }
-        .stat-val {
-            font-size: 14px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            color: #00f3ff;
-        }
-        .stat-pass {
-            font-size: 8px;
-            background: rgba(0, 255, 136, 0.15);
-            color: #00ff88;
-            border-radius: 4px;
-            padding: 1px 4px;
-            margin-top: 3px;
-            display: inline-block;
-        }
-        .league-card {
+
+        .pill-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: 600;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            background: linear-gradient(135deg, rgba(13, 18, 30, 0.95), rgba(25, 15, 40, 0.95));
-            border: 1px solid rgba(138, 43, 226, 0.4);
-            border-radius: 12px;
-            padding: 10px 14px;
+            gap: 5px;
             cursor: pointer;
         }
-        .lvl-badge {
-            background: linear-gradient(135deg, #00f3ff, #8a2be2);
-            color: #05070c;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-        }
-        .rules-box {
-            font-size: 11px;
-            color: #a0aec0;
-            line-height: 1.4;
+
+        .profile-pill {
             display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .rules-header {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            color: #00f3ff;
-            font-size: 12px;
-            display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 22px;
+            padding: 4px 10px 4px 4px;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--primary-grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 14px 16px;
+        }
+
+        .tab-view {
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .tab-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-banner {
+            padding: 16px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(114, 9, 183, 0.35) 0%, rgba(15, 20, 35, 0.9) 100%);
+            border: 1px solid var(--card-border);
+            margin-bottom: 12px;
+        }
+
+        .hero-banner h1 {
+            font-size: 23px;
+            font-weight: 800;
             margin-bottom: 4px;
         }
-        .input-cyber {
-            width: 100%;
-            background: #030508;
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            padding: 10px;
-            border-radius: 10px;
-            color: #fff;
+
+        .hero-subtitle {
+            color: var(--accent-cyan);
             font-size: 13px;
-            margin-bottom: 10px;
-            outline: none;
+            font-weight: 600;
+            margin-bottom: 6px;
         }
-        .btn-cyber {
-            width: 100%;
-            padding: 11px;
-            background: linear-gradient(135deg, #00f3ff, #8a2be2);
-            border: none;
-            border-radius: 10px;
-            color: #05070c;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 12px;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 243, 255, 0.3);
+
+        .hero-tags {
+            font-size: 11px;
+            color: var(--text-muted);
         }
-        .btn-danger {
-            background: linear-gradient(135deg, #ff0055, #8a2be2);
-            color: #fff;
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            backdrop-filter: blur(8px);
         }
-        #ton-connect-button {
+
+        .balance-row {
             display: flex;
-            justify-content: center;
-            margin-bottom: 10px;
-            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
         }
-        .nav-bar {
+
+        .coin-badge {
+            padding: 0 8px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(0, 210, 255, 0.12);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-cyan);
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .label-sm {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .val-lg {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .val-lg span {
+            font-size: 14px;
+            color: var(--accent-purple);
+        }
+
+        .mining-box {
+            background: linear-gradient(160deg, rgba(28, 22, 54, 0.9) 0%, rgba(14, 18, 32, 0.95) 100%);
+            border: 1px solid rgba(0, 210, 255, 0.25);
+        }
+
+        .mined-counter {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            margin-bottom: 4px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 13px;
+            border-radius: 12px;
+            border: none;
+            background: var(--primary-grad);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(138, 43, 226, 0.35);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .stat-cell {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 10px 6px;
+            text-align: center;
+        }
+
+        .level-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lvl-shield {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #b87333, #5c3a21);
+            border: 1px solid #e6a15c;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            margin: 6px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 20%;
+            background: var(--primary-grad);
+            border-radius: 4px;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .quick-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 14px;
+            cursor: pointer;
+        }
+
+        .sub-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            overflow-x: auto;
+        }
+
+        .sub-tab {
+            padding: 8px 14px;
+            border-radius: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .sub-tab.active {
+            background: var(--primary-grad);
+            border-color: transparent;
+        }
+
+        .slots-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .module-slot {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 10px 4px;
+            text-align: center;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            display: flex;
-            background: rgba(8, 12, 20, 0.98);
+            height: 64px;
+            background: rgba(11, 14, 23, 0.96);
             backdrop-filter: blur(15px);
-            border-top: 1px solid rgba(0, 243, 255, 0.2);
-            height: 62px;
-            padding: 0 6px;
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.9);
-            z-index: 100;
-            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
             justify-content: space-around;
+            align-items: center;
+            z-index: 500;
         }
-        .nav-item {
-            flex: 1;
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            background: none;
-            border: none;
-            color: #6c7a92;
-            font-size: 9px;
-            font-family: 'Orbitron', sans-serif;
-            text-transform: uppercase;
+            gap: 4px;
+            font-size: 10px;
             cursor: pointer;
-            gap: 3px;
+            flex: 1;
         }
-        .nav-item.active {
-            color: #00f3ff;
-            text-shadow: 0 0 10px rgba(0,243,255,0.6);
+
+        .nav-btn.active {
+            color: var(--accent-purple);
+            font-weight: 600;
         }
-        .nav-item svg {
-            width: 18px;
-            height: 18px;
+
+        .nav-btn svg {
+            width: 20px;
+            height: 20px;
             fill: currentColor;
         }
-        .nav-center-btn {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, #131b2e, #1f1235);
-            border: 1px solid rgba(0, 243, 255, 0.4);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #00f3ff;
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 7, 12, 0.92);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .lang-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .lang-option {
+            padding: 12px;
+            border-radius: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            font-size: 13px;
             cursor: pointer;
+        }
+
+        .lang-option.selected {
+            border-color: var(--accent-purple);
+            background: rgba(157, 78, 221, 0.2);
+        }
+
+        #ton-connect-button {
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="user-info">
-            <div class="coin-logo">VLT</div>
-            <span class="username" id="user-name">OPERATOR</span>
+    <!-- ВЕРХНЯЯ ШАПКА -->
+    <div class="top-bar">
+        <div class="brand">
+            <div class="brand-logo">VLT</div>
+            <span>CyberVault</span>
         </div>
-        <div class="version">CyberVault v7.2</div>
-    </div>
-
-    <div id="tab-miner" class="content active">
-        <div class="vault-banner">
-            <div>
-                <span style="font-family:'Orbitron'; font-size:11px; font-weight:700; color:#00f3ff;">Dynamic SBT Vault</span>
-                <span class="badge-tep">TEP-85</span>
-                <div style="font-size: 10px; color: #8b9bb4; margin-top: 1px;">Ончейн-депозит и ускорение</div>
-            </div>
-            <button class="btn-small-cyber" onclick="switchTab('levels', document.querySelectorAll('.nav-item')[1])">СХОВИЩЕ</button>
-        </div>
-
-        <div class="card-box">
-            <div class="balance-label">
-                <span>Баланс у додатку</span>
-                <span style="color:#00ff88; font-size:9px;">У грі • Не впливає на рівень</span>
-            </div>
-            <div class="balance-val"><span id="balance">0.00</span> <span style="font-size:16px; color:#a0aec0;">VLT</span></div>
-        </div>
-
-        <div class="card-box">
-            <div class="card-row-between">
-                <div class="mining-status">
-                    <div class="mining-dot"></div>
-                    <span>Активний майнінг</span>
-                </div>
-                <button class="btn-small-cyber" style="background:rgba(0,243,255,0.1); color:#00f3ff; border:1px solid rgba(0,243,255,0.3);" onclick="switchTab('levels', document.querySelectorAll('.nav-item')[1])">Ліги ⓘ</button>
-            </div>
-            <div class="mining-amount">+<span id="safe-balance">0.0000</span> <span style="font-size:14px; color:#a0aec0;">VLT</span></div>
-            
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progress-fill"></div>
-            </div>
-            <div class="progress-info-row">
-                <span id="progress-text">До Рівня 2: 58 VLT (застава в SBT)</span>
-                <span id="progress-percent">0%</span>
-            </div>
-
-            <button class="btn-claim" onclick="claimTokens()">Зібрати намайнене</button>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-title">На годину</div>
-                <div class="stat-val" id="stat-hour">10.0</div>
-                <div style="font-size:9px; color:#8b9bb4;">VLT</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">На добу</div>
-                <div class="stat-val" id="stat-day">~240</div>
-                <div style="font-size:9px; color:#8b9bb4;">VLT</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Буст</div>
-                <div class="stat-val">×1.0</div>
-                <div class="stat-pass">Множник</div>
-            </div>
-        </div>
-
-        <div class="league-card" onclick="switchTab('levels', document.querySelectorAll('.nav-item')[1])">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div class="lvl-badge" id="current-level-badge">LVL 1</div>
+        <div class="top-controls">
+            <button class="pill-btn" onclick="toggleModal('lang-modal', true)">🇷🇺 <span id="cur-lang">RU</span> ▾</button>
+            <button class="pill-btn" onclick="toggleModal('missions-modal', true)">🔔</button>
+            <div class="profile-pill" onclick="switchTab('withdraw')">
+                <div class="avatar">А</div>
                 <div>
-                    <div style="font-family: 'Orbitron'; font-weight: 700; font-size: 13px;" id="league-name">Бронзова ліга</div>
-                    <div style="font-size: 11px; color: #8b9bb4;" id="stake-info-text">Застава в SBT Vault: 58 VLT</div>
+                    <div style="font-size: 11px; font-weight: 700;">Артур</div>
+                    <div style="font-size: 9px; color: var(--text-muted);">LVL 500</div>
                 </div>
             </div>
-            <div style="color: #00f3ff; font-size: 18px;">›</div>
         </div>
+    </div>
 
-        <div class="card-box rules-box">
-            <div class="rules-header">
-                <span>ПРАВИЛА РІВНІВ МАЙНІНГУ</span>
-                <span style="font-size:9px; color:#00f3ff; background:rgba(0,243,255,0.1); padding:2px 6px; border-radius:4px;">TEP-85</span>
+    <div class="content">
+        <!-- 1. ГЛАВНАЯ -->
+        <div id="view-home" class="tab-view active">
+            <div class="hero-banner">
+                <h1>CyberVault Miner</h1>
+                <div class="hero-subtitle">Официальное Web3-приложение VLT</div>
+                <div class="hero-tags">Добывай · Строй · Улучшай · Исследуй</div>
             </div>
-            <div style="display:flex; gap:8px; align-items:flex-start;">
-                <span style="color:#00f3ff;">✓</span>
-                <div><b>Видобуток активується ончейн-заставою в SBT Vault:</b> Ліга, рівень і множник розраховуються суворо за сумою VLT.</div>
+
+            <div class="card balance-row" onclick="switchTab('withdraw')">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div class="coin-badge">VLT</div>
+                    <div>
+                        <div class="label-sm">Баланс в приложении</div>
+                        <div class="val-lg"><span id="ui-balance">1025.0400</span> <span>VLT</span></div>
+                    </div>
+                </div>
+                <div>›</div>
             </div>
-            <div style="display:flex; gap:8px; align-items:flex-start; margin-top:4px;">
-                <span style="color:#ffaa00;">🛡️</span>
-                <div><b>Безпека та повернення 70/30:</b> Ви можете повернути 70% застави через Burn & Exit (30% спалюється протоколом).</div>
+
+            <div class="card mining-box">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <div>
+                        <div style="font-weight:700;">Майнинг VLT</div>
+                        <div style="font-size:11px; color:#00f59b;">● Активный майнинг</div>
+                    </div>
+                    <div style="background:rgba(255,215,0,0.12); color:#ffd700; padding:3px 9px; border-radius:12px; font-size:11px;">⚡ x1,00</div>
+                </div>
+                <div class="mined-counter">+<span id="ui-mined">203.4405</span> VLT</div>
+                <div class="label-sm" style="margin-bottom:12px;">🕒 Достижение Лиги и Уровня</div>
+                <button class="btn-primary" onclick="claimVlt()">⚡ Забрать VLT</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-cell"><div class="label-sm">В час</div><div style="font-weight:800; color:var(--accent-cyan);">9270.7</div></div>
+                <div class="stat-cell"><div class="label-sm">В сутки</div><div style="font-weight:800; color:var(--accent-cyan);">~222k</div></div>
+                <div class="stat-cell"><div class="label-sm">Буст</div><div style="font-weight:800; color:var(--accent-cyan);">x1,00</div></div>
+                <div class="stat-cell"><div class="label-sm">Лига</div><div style="font-weight:800; color:#e6a15c;">Бронза</div></div>
+            </div>
+
+            <div class="card level-card" onclick="switchTab('withdraw')">
+                <div class="lvl-shield">LVL 500</div>
+                <div style="flex:1;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700;">
+                        <span>До Уровня 501</span>
+                        <span style="color:var(--text-muted);">20%</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill"></div></div>
+                    <div style="font-size:10px; color:var(--text-muted);">Залог в SBT Vault: 20 949 484 VLT</div>
+                </div>
+            </div>
+
+            <div class="quick-grid">
+                <div class="quick-card" onclick="switchTab('station'); switchStationSub('floors')">
+                    <h4>Станция VLT</h4>
+                    <p style="font-size:11px; color:var(--text-muted); margin-top:4px;">Стройте этажи и модули.</p>
+                </div>
+                <div class="quick-card" onclick="switchTab('station'); switchStationSub('boxes')">
+                    <h4>Ящики VLT</h4>
+                    <p style="font-size:11px; color:var(--text-muted); margin-top:4px;">Открывайте боксы.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. МАЙНИНГ -->
+        <div id="view-mining" class="tab-view">
+            <div class="card">
+                <div style="font-weight:800; color:var(--accent-cyan); margin-bottom:4px;">Dynamic SBT Vault (TEP-85)</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">Ончейн-депозит и ускорение</div>
+                <div style="font-size:12px;">Залог: <b style="color:#fff;">20 949 484 VLT</b></div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div class="label-sm">ДОСТУПНО К СБОРУ</div>
+                <div class="mined-counter" style="margin:10px 0;">+<span id="ui-mined-2">203.4405</span> VLT</div>
+                <button class="btn-primary" onclick="claimVlt()">СОБРАТЬ НАМАЙНЕННОЕ</button>
+            </div>
+        </div>
+
+        <!-- 3. СТАНЦИЯ -->
+        <div id="view-station" class="tab-view">
+            <div class="card" style="background:linear-gradient(135deg, rgba(40,20,80,0.8), rgba(15,20,35,0.9));">
+                <div class="label-sm">Производство станции</div>
+                <div class="val-lg" style="color:var(--accent-cyan);">0,0 VLT/h</div>
+            </div>
+            <div class="sub-tabs">
+                <div class="sub-tab active" id="stab-floors" onclick="switchStationSub('floors')">Этажи</div>
+                <div class="sub-tab" id="stab-boxes" onclick="switchStationSub('boxes')">Ящики VLT</div>
+                <div class="sub-tab" id="stab-synth" onclick="switchStationSub('synth')">Синтез</div>
+            </div>
+            <div id="subview-floors">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between;">
+                        <b>Этаж #1</b>
+                        <span style="color:var(--accent-cyan); font-size:12px;">+100 VLT/h</span>
+                    </div>
+                    <div class="slots-4">
+                        <div class="module-slot">0/2<br>Чип</div>
+                        <div class="module-slot">0/2<br>Энергия</div>
+                        <div class="module-slot">0/2<br>Кулер</div>
+                        <div class="module-slot">0/2<br>Кристалл</div>
+                    </div>
+                </div>
+            </div>
+            <div id="subview-boxes" style="display:none;">
+                <div class="card">
+                    <h3>Малый бокс</h3>
+                    <p style="font-size:12px; color:var(--text-muted); margin:6px 0;">Случайный модуль станции.</p>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="font-size:18px; font-weight:800;">450 VLT</div>
+                        <button class="btn-primary" style="width:auto; padding:10px 18px;" onclick="buyLootbox(450, 'Малый бокс')">Купить</button>
+                    </div>
+                </div>
+            </div>
+            <div id="subview-synth" style="display:none;">
+                <div class="card">
+                    <div style="font-weight:700; margin-bottom:4px;">Мастерская синтеза</div>
+                    <div style="font-size:11px; color:var(--text-muted);">Объедините 3 одинаковых модуля.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. РЫНОК -->
+        <div id="view-market" class="tab-view">
+            <div class="card">
+                <div class="label-sm">Рыночная цена · 1 VLT</div>
+                <div class="val-lg">0,015829 TON</div>
+            </div>
+        </div>
+
+        <!-- 5. ДРУЗЬЯ -->
+        <div id="view-friends" class="tab-view">
+            <div class="hero-banner">
+                <h2>Приглашай и зарабатывай</h2>
+                <div class="hero-subtitle">5% от добычи друзей</div>
+            </div>
+            <div class="card">
+                <div class="label-sm">Ваша реферальная ссылка</div>
+                <div style="background:rgba(0,0,0,0.35); padding:10px; border-radius:10px; font-size:11px; color:var(--text-muted); margin:8px 0 12px; word-break:break-all;">
+                    https://t.me/CyberVaultMinerBot?startapp=ref_5910070466
+                </div>
+                <button class="btn-primary" onclick="copyRef()">📋 Копировать</button>
+            </div>
+        </div>
+
+        <!-- 6. ВЫВОД И КОШЕЛЕК -->
+        <div id="view-withdraw" class="tab-view">
+            <div class="card" style="text-align:center;">
+                <div class="label-sm">ПОДКЛЮЧЕНИЕ TONKEEPER</div>
+                <p style="font-size:12px; color:var(--text-muted); margin:10px 0;">Все покупки и транзакции поступают на ваш кошелек</p>
+                <div id="ton-connect-button"></div>
             </div>
         </div>
     </div>
 
-    <div id="tab-levels" class="content">
-        <div style="font-family: 'Orbitron'; font-weight: 900; font-size: 16px; color: #00f3ff; margin-bottom: 4px;">🏆 Система 500 рівнів</div>
-        <p style="font-size: 11px; color: #8b9bb4; margin-bottom: 10px;">Повышайте уровень заставой или мгновенным бустом за TON.</p>
-
-        <div class="card-box">
-            <div style="font-family:'Orbitron'; font-weight:700; font-size:13px; margin-bottom:4px;">🔒 Повысить ранг</div>
-            <p style="font-size: 11px; color: #a0aec0; margin-bottom: 10px;" id="next-level-info">Отправьте в залог <b>58 VLT</b>.</p>
-            <button class="btn-cyber" onclick="upgradeLevelByStake()">Внести залог (Stake)</button>
+    <!-- МОДАЛКИ -->
+    <div id="missions-modal" class="modal-overlay">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h2>Центр миссий</h2>
+            <button class="pill-btn" onclick="toggleModal('missions-modal', false)">✕</button>
         </div>
-
-        <div class="card-box">
-            <div style="font-family:'Orbitron'; font-weight:700; font-size:13px; margin-bottom:4px;">⚡ Мгновенный буст за TON</div>
-            <p style="font-size: 11px; color: #a0aec0; margin-bottom: 10px;">Купить следующий уровень за 1 TON.</p>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="color: #00f3ff; font-family: 'Orbitron'; font-weight: bold; font-size: 14px;">1 TON</span>
-                <button class="btn-cyber" style="width: auto; padding: 8px 16px;" onclick="upgradeLevelByTon()">Купить за TON</button>
-            </div>
+        <div class="card">
+            <h3>Ежедневный бонус</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin:6px 0;">Забирайте награды каждый день.</p>
+            <button class="btn-primary" onclick="claimMission(50, this)">Забрать +50 VLT</button>
         </div>
     </div>
 
-    <div id="tab-dex" class="content">
-        <div style="font-family: 'Orbitron'; font-weight: 900; font-size: 16px; color: #00f3ff; margin-bottom: 4px;">🔄 Свап / STON.fi</div>
-        <p style="font-size: 11px; color: #8b9bb4; margin-bottom: 10px;">1% сжигается для дефляции экосистемы[span_2](start_span)[span_2](end_span).</p>
-
-        <div class="card-box">
-            <label style="font-size: 10px; color: #8b9bb4; display: block; margin-bottom: 4px; font-family: 'Orbitron';">Отдаешь (VLT)</label>
-            <input type="number" id="swap-amount" class="input-cyber" placeholder="1000" oninput="calculateSwap()">
-            <div style="font-size: 12px; color: #00f3ff; margin-bottom: 10px; font-family: 'Orbitron'; text-align: center;" id="swap-result">Получаешь ≈ 0.1 TON</div>
-            <button class="btn-cyber" style="background: linear-gradient(135deg, #0088ff, #00f3ff); color:#05070c;" onclick="executeStonSwap()">Обменять на STON.fi</button>
+    <div id="lang-modal" class="modal-overlay">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>Язык</h3>
+            <button class="pill-btn" onclick="toggleModal('lang-modal', false)">✕</button>
+        </div>
+        <div class="lang-grid">
+            <div class="lang-option selected" onclick="setLang('RU', this)">🇷🇺 Русский</div>
+            <div class="lang-option" onclick="setLang('UA', this)">🇺🇦 Українська</div>
         </div>
     </div>
 
-    <div id="tab-wallet" class="content">
-        <div style="font-family: 'Orbitron'; font-weight: 900; font-size: 16px; color: #00f3ff; margin-bottom: 4px;">💸 Кошелёк</div>
-        <p style="font-size: 11px; color: #8b9bb4; margin-bottom: 10px;">Мин. вывод: <b>5 000 VLT</b>[span_3](start_span)[span_3](end_span).</p>
-
-        <div id="ton-connect-button"></div>
-
-        <div class="card-box" style="margin-top: 5px;">
-            <label style="font-size: 10px; color: #8b9bb4; display: block; margin-bottom: 4px; font-family: 'Orbitron';">TON Адрес</label>
-            <input type="text" id="ton-wallet" class="input-cyber" placeholder="UQ...">
-            <label style="font-size: 10px; color: #8b9bb4; display: block; margin-bottom: 4px; font-family: 'Orbitron';">Сумма вывода (VLT)</label>
-            <input type="number" id="withdraw-amount" class="input-cyber" placeholder="5000">
-            <button class="btn-cyber btn-danger" onclick="requestWithdrawal()">Запросить вывод</button>
-        </div>
-    </div>
-
-    <div id="tab-friends" class="content">
-        <div style="font-family: 'Orbitron'; font-weight: 900; font-size: 16px; color: #00f3ff; margin-bottom: 4px;">👥 Синдикат</div>
-        <p style="font-size: 11px; color: #8b9bb4; margin-bottom: 10px;">Приглашай операторов и получай по <b>100 VLT</b>[span_4](start_span)[span_4](end_span)!</p>
-        <div class="card-box" style="text-align: center; padding: 20px;">
-            <div style="font-size: 10px; color: #8b9bb4; font-family: 'Orbitron';">Приглашено рефералов</div>
-            <div style="font-size: 28px; font-family: 'Orbitron'; font-weight: 900; color: #00f3ff; margin: 4px 0;" id="friends-count">0</div>
-        </div>
-        <button class="btn-cyber" onclick="inviteFriend()">Пригласить друга</button>
-    </div>
-
-    <div class="nav-bar">
-        <button class="nav-item active" onclick="switchTab('miner', this)">
-            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            Майнінг
-        </button>
-        <button class="nav-item" onclick="switchTab('dex', this)">
-            <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
-            Обмін
-        </button>
-        <div class="nav-center-btn" onclick="switchTab('levels', document.querySelectorAll('.nav-item')[1])">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg>
-        </div>
-        <button class="nav-item" onclick="switchTab('friends', this)">
-            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-            Друзі
-        </button>
-        <button class="nav-item" onclick="switchTab('wallet', this)">
-            <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-            Виведення
-        </button>
-    </div>
+    <!-- НИЖНЯЯ НАВИГАЦИЯ -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" id="nav-home" onclick="switchTab('home')">Главная</button>
+        <button class="nav-btn" id="nav-mining" onclick="switchTab('mining')">Майнинг</button>
+        <button class="nav-btn" id="nav-station" onclick="switchTab('station')">Станция</button>
+        <button class="nav-btn" id="nav-market" onclick="switchTab('market')">Рынок</button>
+        <button class="nav-btn" id="nav-friends" onclick="switchTab('friends')">Друзья</button>
+        <button class="nav-btn" id="nav-withdraw" onclick="switchTab('withdraw')">Вывод</button>
+    </nav>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        const OWNER_TON_WALLET ="UQD1yWfSHDBQfdsHSMbxQZ4ENGCfqRMSJpnit1zMfTxVVoB1";
+        // ВАШ КОШЕЛЕК УСПЕШНО ВСТРОЕН СЮДА:
+        const MY_WALLET_ADDRESS = "UQD1yWfSHDBQfdsHSMbxQZ4ENGCfqRMSJpnit1zMfTxVVoB1";
+
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+        }
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://wryety05-arch.github.io/cybervault/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect-button'
+            manifestUrl: 'https://raw.githubusercontent.com/ton-connect/sdk/master/packages/tonconnectui/samples/public/tonconnect-manifest.json',
+            uiPreferences: { theme: 'DARK' }
         });
+        tonConnectUI.uiOptions = { buttonRootId: 'ton-connect-button' };
 
-        tonConnectUI.onStatusChange(wallet => {
-            if (wallet) {
-                const rawAddress = wallet.account.address;
-                document.getElementById('ton-wallet').value = rawAddress;
-                localStorage.setItem('vlt_wallet', rawAddress);
-            }
-        });
-
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name || 'OPERATOR';
-        }
-
-        let gameData = {
-            balance: parseFloat(localStorage.getItem('vlt_balance')) || 0,
-            safeBalance: parseFloat(localStorage.getItem('vlt_safe')) || 0,
-            maxSafe: 1000,
-            level: parseInt(localStorage.getItem('vlt_level')) || 1,
-            lastSaveTime: parseInt(localStorage.getItem('vlt_last_time')) || Date.now(),
-            friendsCount: parseInt(localStorage.getItem('vlt_friends')) || 0,
-            savedWallet: localStorage.getItem('vlt_wallet') || ''
-        };
-
-        if(gameData.savedWallet) document.getElementById('ton-wallet').value = gameData.savedWallet;
-
-        function getDailyIncome(lvl) {
-            if (lvl === 1) return 240;
-            if (lvl === 2) return 330;
-            if (lvl === 3) return 494;
-            if (lvl === 4) return 706;
-            if (lvl === 5) return 958;
-            if (lvl === 6) return 1243;
-            if (lvl === 7) return 1558;
-            return Math.floor(1558 + (lvl - 7) * 350 + Math.pow(lvl, 1.3) * 15);
-        }
-
-        function getCurrentSpeed() { return getDailyIncome(gameData.level) / 86400; }
-
-        function getStakeCost(lvl) {
-            if (lvl === 1) return 58;
-            if (lvl === 2) return 116;
-            if (lvl === 3) return 533;
-            if (lvl === 4) return 1300;
-            if (lvl === 5) return 2447;
-            if (lvl === 6) return 3999;
-            if (lvl === 7) return 5972;
-            return Math.floor(5972 + Math.pow(lvl, 2.1) * 45);
-        }
-
-        function calculateOfflineMining() {
-            const elapsed = (Date.now() - gameData.lastSaveTime) / 1000;
-            if (elapsed > 1) {
-                gameData.safeBalance += elapsed * getCurrentSpeed();
-                if (gameData.safeBalance > gameData.maxSafe) gameData.safeBalance = gameData.maxSafe;
-            }
-        }
-        calculateOfflineMining();
-
-        function switchTab(tabId, element) {
-            document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
-            if(element && element.classList) element.classList.add('active');
-            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-        }
+        let balance = 1025.0400;
+        let mined = 203.4405;
+        const ratePerSec = 9270.7 / 3600;
 
         setInterval(() => {
-            if (gameData.safeBalance < gameData.maxSafe) {
-                gameData.safeBalance += getCurrentSpeed();
-                if (gameData.safeBalance > gameData.maxSafe) gameData.safeBalance = gameData.maxSafe;
-            }
-            gameData.lastSaveTime = Date.now();
-            updateUI();
+            mined += ratePerSec;
+            const f = mined.toFixed(4);
+            document.getElementById('ui-mined').innerText = f;
+            document.getElementById('ui-mined-2').innerText = f;
         }, 1000);
 
-        function updateUI() {
-            document.getElementById('balance').innerText = gameData.balance.toFixed(2);
-            document.getElementById('safe-balance').innerText = gameData.safeBalance.toFixed(4);
-            let daily = getDailyIncome(gameData.level);
-            document.getElementById('stat-hour').innerText = (daily / 24).toFixed(1);
-            document.getElementById('stat-day').innerText = '~' + daily;
-            document.getElementById('current-level-badge').innerText = 'LVL ' + gameData.level;
-            
-            let nextCost = getStakeCost(gameData.level);
-            let nextDaily = getDailyIncome(gameData.level + 1);
-            document.getElementById('stake-info-text').innerText = `Застава в SBT Vault: ${nextCost} VLT`;
-            document.getElementById('progress-text').innerText = `До Рівня ${gameData.level + 1}: +${nextDaily} VLT`;
-            document.getElementById('next-level-info').innerHTML = `Отправьте в залог <b style="color: #00f3ff;">${nextCost} VLT</b> для перехода на Рів. ${gameData.level + 1}.`;
-
-            let percent = (gameData.safeBalance / gameData.maxSafe) * 100;
-            document.getElementById('progress-fill').style.width = percent + '%';
-            document.getElementById('progress-percent').innerText = Math.floor(percent) + '%';
-            document.getElementById('friends-count').innerText = gameData.friendsCount;
-
-            localStorage.setItem('vlt_balance', gameData.balance);
-            localStorage.setItem('vlt_safe', gameData.safeBalance);
-            localStorage.setItem('vlt_level', gameData.level);
-            localStorage.setItem('vlt_last_time', gameData.lastSaveTime);
+        function updateBalanceUI() {
+            document.getElementById('ui-balance').innerText = balance.toFixed(4);
         }
 
-        function upgradeLevelByStake() {
-            if (gameData.level >= 500) { alert('🏆 Максимальный уровень!'); return; }
-            let cost = getStakeCost(gameData.level);
-            if (gameData.balance < cost) { alert(`❌ Недостаточно средств! Требуется ${cost} VLT.`); return; }
-            gameData.balance -= cost;
-            gameData.level += 1;
-            updateUI();
-            alert(`🎉 Успешно! Уровень ${gameData.level}`);
+        function claimVlt() {
+            balance += mined;
+            mined = 0;
+            updateBalanceUI();
+            document.getElementById('ui-mined').innerText = '0.0000';
+            document.getElementById('ui-mined-2').innerText = '0.0000';
+            alert('Награды успешно собраны!');
         }
 
-        function upgradeLevelByTon() {
-            if (gameData.level >= 500) { alert('🏆 Максимальный уровень!'); return; }
-            if (confirm(`⚡ Повысить уровень до ${gameData.level + 1} за 1 TON?`)) {
-                let payUrl = `ton://transfer/${OWNER_TON_WALLET}?amount=1000000000&text=CyberVault_Level_${gameData.level + 1}`;
-                gameData.level += 1;
-                updateUI();
-                if (tg.openTelegramLink) tg.openTelegramLink(payUrl);
-                else window.open(payUrl, '_blank');
+        async function buyLootbox(price, name) {
+            if (!tonConnectUI.connected) {
+                alert('Подключите кошелек Tonkeeper в разделе «Вывод» перед покупкой!');
+                switchTab('withdraw');
+                return;
+            }
+
+            try {
+                await tonConnectUI.sendTransaction({
+                    validUntil: Math.floor(Date.now() / 1000) + 300,
+                    messages: [{ address: MY_WALLET_ADDRESS, amount: "100000000" }]
+                });
+                balance -= price;
+                updateBalanceUI();
+                alert(`Успешно куплено: ${name}!`);
+            } catch (e) {
+                alert('Транзакция отменена или произошла ошибка.');
             }
         }
 
-        function calculateSwap() {
-            let val = parseFloat(document.getElementById('swap-amount').value) || 0;
-            document.getElementById('swap-result').innerText = `Получаешь ≈ ${(val * 0.0001 * 0.99).toFixed(3)} TON (Burn 1%)`;
+        function switchTab(id) {
+            document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('view-' + id).classList.add('active');
+            document.getElementById('nav-' + id).classList.add('active');
+            window.scrollTo(0, 0);
         }
 
-        function executeStonSwap() {
-            let val = parseFloat(document.getElementById('swap-amount').value);
-            if (isNaN(val) || val < 1000) { alert('⚠️ Мин. сумма: 1 000 VLT'); return; }
-            if (val > gameData.balance) { alert('❌ Недостаточно средств!'); return; }
-            gameData.balance -= val;
-            updateUI();
-            alert('🔥 Свап выполнен, часть сожжена[span_5](start_span)[span_5](end_span)!');
-            window.open("https://app.ston.fi/swap", '_blank');
+        function switchStationSub(sub) {
+            ['floors', 'boxes', 'synth'].forEach(id => {
+                document.getElementById('subview-' + id).style.display = (id === sub) ? 'block' : 'none';
+                document.getElementById('stab-' + id).classList.toggle('active', id === sub);
+            });
         }
 
-        function claimTokens() {
-            if (gameData.safeBalance < 0.05) return;
-            gameData.balance += gameData.safeBalance;
-            gameData.safeBalance = 0;
-            gameData.lastSaveTime = Date.now();
-            updateUI();
+        function toggleModal(id, show) {
+            document.getElementById(id).style.display = show ? 'block' : 'none';
         }
 
-        function requestWithdrawal() {
-            let wallet = document.getElementById('ton-wallet').value.trim();
-            let amount = parseFloat(document.getElementById('withdraw-amount').value);
-            if (!wallet || wallet.length < 10) { alert('⚠️ Введите адрес!'); return; }
-            if (isNaN(amount) || amount < 5000) { alert('⚠️ Мин. вывод: 5 000 VLT[span_6](start_span)[span_6](end_span)'); return; }
-            if (amount > gameData.balance) { alert('❌ Недостаточно средств!'); return; }
-            gameData.balance -= amount;
-            updateUI();
-            alert(`✅ Заявка на вывод ${amount} VLT создана!`);
+        function setLang(code, el) {
+            document.getElementById('cur-lang').innerText = code;
+            document.querySelectorAll('.lang-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            toggleModal('lang-modal', false);
         }
 
-        function inviteFriend() {
-            let uid = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : '123';
-            window.open(`https://t.me/share/url?url=https://t.me/vlt_vault_bot?start=${uid}&text=🚀 Запускай CyberVault Miner!`, '_blank');
+        function claimMission(reward, btn) {
+            balance += reward;
+            updateBalanceUI();
+            btn.innerText = 'Получено ✓';
+            btn.disabled = true;
+            alert(`Награда +${reward} VLT получена!`);
         }
 
-        updateUI();
+        function copyRef() {
+            navigator.clipboard?.writeText('https://t.me/CyberVaultMinerBot?startapp=ref_5910070466');
+            alert('Ссылка скопирована!');
+        }
     </script>
 </body>
 </html>
