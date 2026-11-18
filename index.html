@@ -1,877 +1,303 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hamster Kombat CEO</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-    <style>
-        :root {
-            --bg-dark: #090b10;
-            --sheet-bg: #15181f;
-            --card-bg: #1e2129;
-            --card-border: rgba(243, 186, 47, 0.2);
-            --gold-main: #f3ba2f;
-            --gold-grad: linear-gradient(180deg, #ffe596 0%, #f3ba2f 50%, #b87c05 100%);
-            --orange-glow: rgba(243, 186, 47, 0.15);
-            --text-main: #ffffff;
-            --text-muted: #848a96;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: var(--text-main);
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            /* Космическо-искрящийся фон как в Hamster Kombat */
-            background-image: 
-                radial-gradient(circle at 50% -20%, rgba(243, 186, 47, 0.25) 0%, transparent 60%),
-                radial-gradient(circle at 10% 40%, rgba(93, 120, 255, 0.12) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.08) 0%, transparent 50%);
-        }
-
-        /* Шапка */
-        .top-user-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 16px 14px;
-            background: rgba(9, 11, 16, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 10;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 4px 12px 4px 4px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .user-avatar {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: var(--gold-grad);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            box-shadow: 0 0 10px rgba(243, 186, 47, 0.4);
-        }
-
-        .user-name {
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .exchange-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255, 186, 47, 0.08);
-            border: 1px solid rgba(255, 186, 47, 0.2);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        /* Главный лист-оболочка */
-        .main-sheet {
-            flex: 1;
-            background: var(--sheet-bg);
-            border-top: 3px solid #ffe596;
-            border-radius: 36px 36px 0 0;
-            box-shadow: 0 -15px 40px rgba(243, 186, 47, 0.25), inset 0 1px 0 rgba(255,255,255,0.1);
-            padding: 16px 16px 85px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        /* 3 плашки статистики */
-        .top-stats-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .stat-pill {
-            background: var(--card-bg);
-            border-radius: 14px;
-            padding: 8px 4px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-        }
-
-        .stat-pill-label {
-            font-size: 9px;
-            font-weight: 700;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .stat-pill-val {
-            font-size: 12px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-        }
-
-        /* Счётчик монет (Баланс) */
-        .balance-display {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin: 8px 0 14px;
-        }
-
-        /* 3D монета возле баланса */
-        .coin-3d {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #fff5cc 0%, #f3ba2f 40%, #875b00 95%);
-            box-shadow: 
-                0 4px 15px rgba(243, 186, 47, 0.5),
-                inset -2px -2px 5px rgba(0,0,0,0.4),
-                inset 2px 2px 5px rgba(255,255,255,0.6);
-            border: 2.5px solid #ffdf73;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 22px;
-            color: #5c3b00;
-            text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
-            position: relative;
-        }
-
-        .balance-number {
-            font-size: 40px;
-            font-weight: 950;
-            letter-spacing: -0.5px;
-            background: linear-gradient(180deg, #ffffff 40%, #e0e0e0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        /* Шкала лиги */
-        .league-bar-wrap {
-            margin-bottom: 22px;
-            padding: 0 4px;
-        }
-
-        .league-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .league-track {
-            width: 100%;
-            height: 8px;
-            background: #111317;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .league-fill {
-            height: 100%;
-            width: 2%;
-            background: linear-gradient(90deg, #74c69d 0%, #f3ba2f 60%, #ff5e00 100%);
-            border-radius: 10px;
-        }
-
-        /* Главная кнопка-круг с хомяком */
-        .tap-circle-outer {
-            width: 258px;
-            height: 258px;
-            margin: 8px auto 20px;
-            border-radius: 50%;
-            /* Объемный золотисто-огненный обод */
-            background: radial-gradient(circle, #e08316 0%, #a84700 45%, #421600 75%, #150600 100%);
-            padding: 14px;
-            box-shadow: 
-                0 18px 45px rgba(168, 71, 0, 0.55),
-                inset 0 4px 15px rgba(255, 255, 255, 0.25),
-                inset 0 -4px 15px rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.06s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-
-        .tap-circle-outer::before {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ffd56b, transparent, #b05c00);
-            z-index: -1;
-            opacity: 0.6;
-        }
-
-        .tap-circle-outer:active {
-            transform: scale(0.94);
-        }
-
-        .tap-circle-inner {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle at 50% 30%, #4459d4 0%, #171d54 65%, #0a0d2a 100%);
-            box-sizing: border-box;
-            border: 4px solid #1a1e29;
-            box-shadow: inset 0 2px 10px rgba(255,255,255,0.15), 0 4px 12px rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Объемный анимированный 3D Хомяк-СЕО */
-        .hamster-illustration {
-            width: 180px;
-            height: 180px;
-            transform: translateY(6px);
-            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6));
-        }
-
-        /* 3D Эффекты для хомяка */
-        .hamster-body { fill: url(#body-grad); }
-        .hamster-belly { fill: url(#belly-grad); }
-        .hamster-ear-inner { fill: url(#ear-grad); }
-        .hamster-cheek { fill: url(#cheek-grad); }
-        .suit { fill: url(#suit-grad); }
-
-        /* Нижний ряд энергии и буста */
-        .energy-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 8px;
-            font-size: 13px;
-            font-weight: 800;
-        }
-
-        .energy-left {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .boost-btn {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            background: none;
-            border: none;
-            font-size: 13px;
-            font-weight: 800;
-            cursor: pointer;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
-        }
-
-        /* Плавное появление страниц */
-        .tab-view {
-            display: none;
-            animation: fadeIn 0.22s ease-out;
-        }
-
-        .tab-view.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* Карточки улучшения Mine */
-        .mine-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .mine-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.03);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-            transition: transform 0.1s ease;
-        }
-
-        .mine-card:active {
-            transform: scale(0.97);
-            background: #232731;
-        }
-
-        .mine-top {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .mine-icon-box {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            background: #2b303b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            border: 1px solid rgba(255,255,255,0.06);
-            box-shadow: inset 0 1px 3px rgba(255,255,255,0.1);
-        }
-
-        .mine-bottom {
-            border-top: 1px solid rgba(255,255,255,0.06);
-            padding-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 11px;
-            font-weight: 800;
-        }
-
-        .btn-gold-action {
-            width: 100%;
-            padding: 15px;
-            border-radius: 16px;
-            border: none;
-            background: var(--gold-grad);
-            color: #0d0f14;
-            font-weight: 900;
-            font-size: 15px;
-            cursor: pointer;
-            box-shadow: 0 5px 18px rgba(243, 186, 47, 0.4);
-        }
-
-        .btn-gold-action:active {
-            opacity: 0.9;
-            transform: scale(0.98);
-        }
-
-        /* Навигационная панель */
-        .bottom-nav-wrap {
-            position: fixed;
-            bottom: 12px;
-            left: 12px;
-            right: 12px;
-            background: #1f222a;
-            border-radius: 20px;
-            padding: 6px;
-            display: flex;
-            justify-content: space-between;
-            z-index: 1000;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.7);
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-
-        .nav-tab {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 8px 2px;
-            border-radius: 14px;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 10px;
-            font-weight: 700;
-            gap: 3px;
-            cursor: pointer;
-        }
-
-        .nav-tab.active {
-            background: #15181f;
-            color: #ffffff;
-        }
-
-        .nav-tab svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-
-        /* Вылетающая цифра тапа +1 (объемная с тенью) */
-        .float-tap-num {
-            position: fixed;
-            font-size: 28px;
-            font-weight: 950;
-            color: #ffffff;
-            text-shadow: 
-                0 4px 8px rgba(0,0,0,0.8),
-                0 0 10px rgba(243, 186, 47, 0.5);
-            pointer-events: none;
-            z-index: 9999;
-            animation: floatFlyUp 0.65s cubic-bezier(0.25, 1, 0.50, 1) forwards;
-        }
-
-        @keyframes floatFlyUp {
-            0% { opacity: 1; transform: translateY(0) scale(0.8) rotate(-5deg); }
-            50% { opacity: 1; transform: translateY(-40px) scale(1.15) rotate(5deg); }
-            100% { opacity: 0; transform: translateY(-80px) scale(0.9) rotate(0deg); }
-        }
-
-        #ton-connect-button {
-            margin: 15px 0;
-            display: flex;
-            justify-content: center;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXORA Mining</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080b12;color:#fff;
+ font-family:Arial,sans-serif;padding:20px 16px 100px;
+}
+header{display:flex;align-items:center;gap:12px;margin:10px 0 25px}
+.logo{
+ width:55px;height:55px;border:2px solid #e6a52e;
+ border-radius:16px;display:grid;place-items:center;
+ color:#f7b633;font-size:30px;font-weight:bold;
+ box-shadow:0 0 20px #d99a2533;
+}
+.brand{font-size:22px;font-weight:bold}
+.sub{color:#d9a638;font-size:12px;margin-top:5px}
+.card{
+ background:#10141d;border:1px solid #272c38;
+ border-radius:23px;padding:20px;margin-bottom:17px;
+}
+.caption{color:#9299a9;font-size:14px}
+.balance{font-size:35px;font-weight:bold;margin-top:12px}
+.gold{color:#f5b331}
+.green{color:#22d99b}
+.topline{display:flex;justify-content:space-between;align-items:center}
+.status{color:#20d99a;font-size:14px}
+.mining{border:1px solid #b9872f}
+.amount{font-size:34px;font-weight:bold;margin:24px 0}
+.progress{
+ height:9px;background:#252b35;border-radius:20px;
+ overflow:hidden;margin:15px 0;
+}
+.bar{height:100%;width:0;background:linear-gradient(90deg,#19d69a,#f5b331)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.stat{background:#171c27;padding:13px 8px;border-radius:15px;text-align:center}
+.stat b{display:block;margin-top:12px;font-size:17px}
+button{
+ border:0;border-radius:15px;padding:15px;
+ font-size:15px;font-weight:bold;cursor:pointer;
+}
+.primary{background:linear-gradient(110deg,#ffd04a,#e58c16);color:#111;width:100%}
+.secondary{background:#1a202c;color:#f3b538;border:1px solid #363e4d}
+.nav{
+ position:fixed;bottom:0;left:0;width:100%;
+ background:#10141d;border-top:1px solid #303644;
+ display:flex;justify-content:space-around;padding:12px 3px 20px;
+}
+.nav button{background:transparent;color:#8991a2;padding:8px 5px;font-size:12px}
+.nav button.active{color:#f5b331}
+.page{display:none}
+.page.active{display:block}
+input{
+ width:100%;padding:17px;border-radius:14px;
+ background:#080b12;color:white;border:1px solid #303644;
+ font-size:18px;margin:15px 0;
+}
+.level{font-size:27px;color:#f5b331;font-weight:bold}
+.info{line-height:1.7;color:#a9b0be;font-size:14px}
+</style>
 </head>
 <body>
 
-    <!-- ШАПКА -->
-    <div class="top-user-bar">
-        <div class="user-info">
-            <div class="user-avatar">🐹</div>
-            <div class="user-name">Артур (CEO)</div>
-        </div>
-        <div class="exchange-badge">
-            <span style="color: #f3ba2f; text-shadow: 0 0 5px rgba(243,186,47,0.5);">❖</span>
-            <span>Binance</span>
-        </div>
-    </div>
+<header>
+ <div class="logo">N</div>
+ <div>
+  <div class="brand">NEXORA MINING</div>
+  <div class="sub">OFFICIAL WEB3 APP</div>
+ </div>
+</header>
 
-    <!-- КОНТЕНТ С ЗОЛОТЫМ ОТЛИВОМ -->
-    <div class="main-sheet">
+<!-- MINING -->
+<section id="mining" class="page active">
+ <div class="card">
+  <div class="caption">Баланс в приложении</div>
+  <div class="balance"><span id="balance">0.00</span>
+   <span class="gold" style="font-size:18px">NEX</span>
+  </div>
+ </div>
 
-        <!-- 1. EXCHANGE (ТАПАТЕЛЬ) -->
-        <div id="view-home" class="tab-view active">
-            <div class="top-stats-3">
-                <div class="stat-pill">
-                    <div class="stat-pill-label" style="color: #ff9f43;">Прибыль за тап</div>
-                    <div class="stat-pill-val"><span style="color:#f3ba2f;">🪙</span> +<span id="ui-tap-val">1</span></div>
-                </div>
-                <div class="stat-pill">
-                    <div class="stat-pill-label" style="color: #82a5fc;">Для апа</div>
-                    <div class="stat-pill-val">5K</div>
-                </div>
-                <div class="stat-pill">
-                    <div class="stat-pill-label" style="color: #7bed9f;">Прибыль в час</div>
-                    <div class="stat-pill-val"><span style="color:#f3ba2f;">🪙</span> +<span id="ui-profit">0</span></div>
-                </div>
-            </div>
+ <div class="card mining">
+  <div class="topline">
+   <b>⛏ Активный майнинг</b>
+   <span class="status">● Работает</span>
+  </div>
+  <div class="amount green">+<span id="earned">0.0000</span> NEX</div>
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="topline caption">
+   <span>До следующего уровня</span>
+   <b class="gold" id="percent">0%</b>
+  </div>
+  <div class="caption" style="margin-top:12px">
+   Уровень <span id="level">1</span>
+  </div>
+ </div>
 
-            <!-- Баланс -->
-            <div class="balance-display">
-                <div class="coin-3d">$</div>
-                <div class="balance-number" id="ui-balance">0</div>
-            </div>
+ <div class="stats">
+  <div class="stat">
+   <span class="caption">На час</span>
+   <b class="green" id="hour">10</b>
+   <span class="caption">NEX</span>
+  </div>
+  <div class="stat">
+   <span class="caption">На сутки</span>
+   <b class="green" id="day">240</b>
+   <span class="caption">NEX</span>
+  </div>
+  <div class="stat">
+   <span class="caption">Буст</span>
+   <b class="gold" id="boost">x1.00</b>
+  </div>
+ </div>
 
-            <!-- Лига -->
-            <div class="league-bar-wrap">
-                <div class="league-header">
-                    <span style="color: #f3ba2f;">Bronze 🥉 ›</span>
-                    <span style="color: var(--text-muted);">Level <span id="ui-lvl">1</span>/10</span>
-                </div>
-                <div class="league-track">
-                    <div class="league-fill" id="league-fill"></div>
-                </div>
-            </div>
+ <div class="card" style="margin-top:17px">
+  <div class="topline">
+   <b>🛡 Dynamic Vault</b>
+   <span class="gold">NEX Vault</span>
+  </div>
+  <div class="amount"><span id="vault">0</span> NEX</div>
+  <p class="info">Виртуальный залог для повышения уровня и скорости майнинга.</p>
+  <button class="primary" onclick="deposit()">Увеличить залог</button>
+ </div>
+</section>
 
-            <!-- Интерактивная 3D кнопка Хомяка-CEO -->
-            <div class="tap-circle-outer" onclick="tapHamster(event)">
-                <div class="tap-circle-inner">
-                    <!-- Детализированный 3D хомяк-CEO (векторы с градиентами, тенями и костюмом) -->
-                    <svg class="hamster-illustration" viewBox="0 0 200 200">
-                        <defs>
-                            <!-- Градиенты для 3D-эффекта пушистости и объема -->
-                            <radialGradient id="body-grad" cx="50%" cy="40%" r="50%">
-                                <stop offset="0%" stop-color="#f5b263"/>
-                                <stop offset="65%" stop-color="#cb701b"/>
-                                <stop offset="100%" stop-color="#8c3d00"/>
-                            </radialGradient>
-                            <radialGradient id="belly-grad" cx="50%" cy="30%" r="50%">
-                                <stop offset="0%" stop-color="#fff8f0"/>
-                                <stop offset="70%" stop-color="#f7d0a2"/>
-                                <stop offset="100%" stop-color="#d6a065"/>
-                            </radialGradient>
-                            <radialGradient id="ear-grad" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" stop-color="#ffa085"/>
-                                <stop offset="70%" stop-color="#e26a4f"/>
-                                <stop offset="100%" stop-color="#ad3e26"/>
-                            </radialGradient>
-                            <radialGradient id="cheek-grad" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" stop-color="#fff4e8"/>
-                                <stop offset="85%" stop-color="#f5bc7f"/>
-                                <stop offset="100%" stop-color="#cf8e44"/>
-                            </radialGradient>
-                            <linearGradient id="suit-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#2a3240"/>
-                                <stop offset="50%" stop-color="#181d26"/>
-                                <stop offset="100%" stop-color="#0b0e12"/>
-                            </linearGradient>
-                        </defs>
-                        <!-- Задние уши -->
-                        <circle cx="58" cy="50" r="23" fill="#8c3d00"/>
-                        <circle cx="58" cy="50" r="14" class="hamster-ear-inner"/>
-                        <circle cx="142" cy="50" r="23" fill="#8c3d00"/>
-                        <circle cx="142" cy="50" r="14" class="hamster-ear-inner"/>
-                        
-                        <!-- Голова (Объемные щеки) -->
-                        <ellipse cx="100" cy="95" rx="58" ry="52" class="hamster-body"/>
-                        <!-- Светлые щечки по бокам -->
-                        <ellipse cx="62" cy="112" rx="23" ry="17" class="hamster-cheek"/>
-                        <ellipse cx="138" cy="112" rx="23" ry="17" class="hamster-cheek"/>
-                        <!-- Светлая мордочка по центру -->
-                        <ellipse cx="100" cy="106" rx="25" ry="20" class="hamster-belly"/>
+<!-- VAULT -->
+<section id="vaultpage" class="page">
+ <h2>Dynamic Vault</h2>
+ <div class="card">
+  <div class="caption">Твой виртуальный залог</div>
+  <div class="balance gold" id="vault2">0 NEX</div>
+  <p class="info">В демонстрационной версии залог существует только внутри приложения.</p>
+  <button class="primary" onclick="deposit()">Внести 100 NEX</button>
+ </div>
+ <div class="card">
+  <div class="level">Уровень <span id="level2">1</span></div>
+  <p class="info">Чем выше уровень, тем больше скорость виртуального майнинга.</p>
+ </div>
+</section>
 
-                        <!-- Блики и тени на щеках -->
-                        <ellipse cx="50" cy="108" rx="7" ry="4" fill="#ffffff" opacity="0.15"/>
-                        <ellipse cx="150" cy="108" rx="7" ry="4" fill="#ffffff" opacity="0.15"/>
+<!-- EXCHANGE -->
+<section id="exchange" class="page">
+ <h2>Обмен</h2>
+ <div class="card">
+  <p class="caption">Обмен NEX</p>
+  <input type="number" id="swapamount" placeholder="Количество NEX">
+  <p class="info">Демонстрационный курс: 1 TON = 1000 NEX</p>
+  <button class="primary" onclick="swap()">Рассчитать обмен</button>
+  <h3 id="swapresult" class="gold"></h3>
+  <p class="info">Реальный обмен пока не подключён.</p>
+ </div>
+</section>
 
-                        <!-- Глаза с 3D-бликами -->
-                        <circle cx="78" cy="80" r="8.5" fill="#111111"/>
-                        <circle cx="81" cy="77" r="3.5" fill="#ffffff"/>
-                        <circle cx="76" cy="83" r="1" fill="#ffffff" opacity="0.8"/>
-                        
-                        <circle cx="122" cy="80" r="8.5" fill="#111111"/>
-                        <circle cx="125" cy="77" r="3.5" fill="#ffffff"/>
-                        <circle cx="120" cy="83" r="1" fill="#ffffff" opacity="0.8"/>
+<!-- FRIENDS -->
+<section id="friends" class="page">
+ <h2>Друзья</h2>
+ <div class="card">
+  <h3 class="gold">Реферальная программа</h3>
+  <p class="info">Приглашай друзей и получай демонстрационные бонусы.</p>
+  <div class="balance" id="refcount">0</div>
+  <p class="caption">Приглашено друзей</p>
+  <button class="primary" onclick="copyReferral()">Копировать ссылку</button>
+ </div>
+</section>
 
-                        <!-- Носик и улыбка -->
-                        <path d="M100 87 L96 92 C96 92 98 94 100 94 C102 94 104 92 104 92 Z" fill="#ff6b8b"/>
-                        <path d="M91 101 C95 106 100 106 100 102 C100 106 105 106 109 101" stroke="#522700" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                        
-                        <!-- Передние зубы -->
-                        <rect x="96" y="103" width="8" height="6" rx="1.5" fill="#ffffff"/>
-                        <line x1="100" y1="103" x2="100" y2="109" stroke="#cccccc" stroke-width="0.8"/>
+<!-- WITHDRAW -->
+<section id="withdraw" class="page">
+ <h2>Вывод средств</h2>
+ <div class="card">
+  <div class="caption">Доступный баланс</div>
+  <div class="balance" id="withdrawbalance">0 NEX</div>
+  <input type="number" id="withdrawamount" placeholder="Количество NEX">
+  <button class="primary" onclick="withdraw()">Создать тестовую заявку</button>
+  <p class="info">Это демонстрационная заявка. Реальные переводы не выполняются.</p>
+ </div>
+ <div class="card">
+  <h3>История заявок</h3>
+  <div id="history" class="info">Заявок пока нет</div>
+ </div>
+</section>
 
-                        <!-- Костюм CEO (детализированный, с воротником и красным галстуком) -->
-                        <path d="M38 185 C38 138, 162 138, 162 185 Z" class="suit"/>
-                        <!-- Белая рубашка -->
-                        <polygon points="80,140 120,140 100,180" fill="#ffffff"/>
-                        <!-- Воротник пиджака -->
-                        <path d="M38 185 L76 142 L84 156 L68 185 Z" fill="#181d26" stroke="#2a3240" stroke-width="1"/>
-                        <path d="M162 185 L124 142 L116 156 L132 185 Z" fill="#181d26" stroke="#2a3240" stroke-width="1"/>
-                        <!-- Красный галстук-галстук -->
-                        <polygon points="96,143 104,143 106,172 100,182 94,172" fill="#e63946"/>
-                        <!-- Золотой значок на лацкане -->
-                        <circle cx="68" cy="158" r="3" fill="#f3ba2f"/>
-                        <circle cx="68" cy="158" r="1.5" fill="#fff5cc"/>
-                    </svg>
-                </div>
-            </div>
+<nav class="nav">
+ <button class="active" onclick="openPage('mining',this)">⛏<br>Mining</button>
+ <button onclick="openPage('exchange',this)">⇄<br>Обмен</button>
+ <button onclick="openPage('vaultpage',this)">🛡<br>Vault</button>
+ <button onclick="openPage('friends',this)">♧<br>Друзья</button>
+ <button onclick="openPage('withdraw',this)">▣<br>Вывод</button>
+</nav>
 
-            <!-- Энергия и Буст -->
-            <div class="energy-row">
-                <div class="energy-left">
-                    <span style="color: #f3ba2f; font-size: 20px; filter: drop-shadow(0 0 5px rgba(243,186,47,0.5));">⚡</span>
-                    <span><span id="ui-energy">1000</span> / 1000</span>
-                </div>
-                <button class="boost-btn" onclick="fullEnergy()">
-                    <span style="font-size: 18px;">🚀</span>
-                    <span style="color: #f3ba2f;">Boost</span>
-                </button>
-            </div>
-        </div>
+<script>
+const KEY="nexora_demo_v1";
 
-        <!-- 2. MINE (ПРОКАЧКА КАРТ) -->
-        <div id="view-mine" class="tab-view">
-            <div class="balance-display" style="margin-bottom: 20px;">
-                <div class="coin-3d">$</div>
-                <div class="balance-number" id="ui-balance-mine">0</div>
-            </div>
+let data=JSON.parse(localStorage.getItem(KEY)||"null")||{
+ balance:0,
+ vault:0,
+ level:1,
+ referrals:0,
+ history:[],
+ last:Date.now()
+};
 
-            <div class="mine-grid">
-                <div class="mine-card" onclick="buyCard(250, 120, 'Fan tokens', 'card1')">
-                    <div class="mine-top">
-                        <div class="mine-icon-box">🎟️</div>
-                        <div>
-                            <div style="font-size: 13px; font-weight: 800;">Fan tokens</div>
-                            <div style="font-size: 10px; color: var(--text-muted); margin-top: 1px;">Прибыль в час</div>
-                            <div style="font-size: 11px; font-weight: 800; color: #7bed9f;">+120</div>
-                        </div>
-                    </div>
-                    <div class="mine-bottom">
-                        <span style="color: var(--text-muted);">lvl <span id="card1-lvl">0</span></span>
-                        <span style="color: #f3ba2f;">🪙 250</span>
-                    </div>
-                </div>
+const hourly=10;
+const daily=hourly*24;
 
-                <div class="mine-card" onclick="buyCard(500, 280, 'Staking', 'card2')">
-                    <div class="mine-top">
-                        <div class="mine-icon-box">📈</div>
-                        <div>
-                            <div style="font-size: 13px; font-weight: 800;">Staking</div>
-                            <div style="font-size: 10px; color: var(--text-muted); margin-top: 1px;">Прибыль в час</div>
-                            <div style="font-size: 11px; font-weight: 800; color: #7bed9f;">+280</div>
-                        </div>
-                    </div>
-                    <div class="mine-bottom">
-                        <span style="color: var(--text-muted);">lvl <span id="card2-lvl">0</span></span>
-                        <span style="color: #f3ba2f;">🪙 500</span>
-                    </div>
-                </div>
+function save(){
+ localStorage.setItem(KEY,JSON.stringify(data));
+}
 
-                <div class="mine-card" onclick="buyCard(1000, 600, 'BTC pairs', 'card3')">
-                    <div class="mine-top">
-                        <div class="mine-icon-box">₿</div>
-                        <div>
-                            <div style="font-size: 13px; font-weight: 800;">BTC pairs</div>
-                            <div style="font-size: 10px; color: var(--text-muted); margin-top: 1px;">Прибыль в час</div>
-                            <div style="font-size: 11px; font-weight: 800; color: #7bed9f;">+600</div>
-                        </div>
-                    </div>
-                    <div class="mine-bottom">
-                        <span style="color: var(--text-muted);">lvl <span id="card3-lvl">0</span></span>
-                        <span style="color: #f3ba2f;">🪙 1 000</span>
-                    </div>
-                </div>
+function update(){
+ let now=Date.now();
+ let elapsed=Math.max(0,Math.min(now-data.last,86400000));
+ let rate=hourly*data.level;
+ let earned=elapsed/3600000*rate;
 
-                <div class="mine-card" onclick="buyCard(2500, 1500, 'TON + Hamster', 'card4')">
-                    <div class="mine-top">
-                        <div class="mine-icon-box">💎</div>
-                        <div>
-                            <div style="font-size: 13px; font-weight: 800;">TON + Hamster</div>
-                            <div style="font-size: 10px; color: var(--text-muted); margin-top: 1px;">Прибыль в час</div>
-                            <div style="font-size: 11px; font-weight: 800; color: #7bed9f;">+1 500</div>
-                        </div>
-                    </div>
-                    <div class="mine-bottom">
-                        <span style="color: var(--text-muted);">lvl <span id="card4-lvl">0</span></span>
-                        <span style="color: #f3ba2f;">🪙 2 500</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+ data.balance+=earned;
+ data.last=now;
 
-        <!-- 3. FRIENDS -->
-        <div id="view-friends" class="tab-view">
-            <div style="text-align: center; margin-bottom: 22px;">
-                <h2 style="font-size: 22px; margin-bottom: 4px;">Пригласите друзей!</h2>
-                <p style="font-size: 12px; color: var(--text-muted);">Вы и ваш друг получите бонусы</p>
-            </div>
-            <div style="background: var(--card-bg); border-radius: 18px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 14px; border: 1px solid rgba(255,255,255,0.03);">
-                <div style="font-size: 32px; filter: drop-shadow(0 0 5px rgba(243,186,47,0.3));">🎁</div>
-                <div>
-                    <div style="font-size: 14px; font-weight: 800;">Пригласить друга</div>
-                    <div style="font-size: 12px; color: #f3ba2f; font-weight: 800;">+5 000 <span style="color: var(--text-muted); font-weight: 400;">для вас и вашего друга</span></div>
-                </div>
-            </div>
-            <button class="btn-gold-action" onclick="copyRef()">Пригласить друга</button>
-        </div>
+ let required=data.level*1000;
+ let percent=Math.min(100,data.vault/required*100);
 
-        <!-- 4. EARN -->
-        <div id="view-earn" class="tab-view">
-            <div style="text-align: center; margin-bottom: 22px;">
-                <div style="font-size: 48px; filter: drop-shadow(0 4px 10px rgba(243,186,47,0.35));">🪙</div>
-                <h2 style="font-size: 22px; margin-top: 4px;">Заработайте больше монет</h2>
-            </div>
-            <div style="background: var(--card-bg); border-radius: 18px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.03); cursor: pointer;" onclick="claimDaily(this)">
-                <div style="display: flex; align-items: center; gap: 14px;">
-                    <div style="font-size: 28px;">📅</div>
-                    <div>
-                        <div style="font-size: 14px; font-weight: 800;">Ежедневная награда</div>
-                        <div style="font-size: 12px; color: #f3ba2f; font-weight: 800;">+5 000</div>
-                    </div>
-                </div>
-                <span style="color: var(--text-muted); font-size: 18px;">›</span>
-            </div>
-        </div>
+ document.getElementById("balance").textContent=data.balance.toFixed(4);
+ document.getElementById("earned").textContent=earned.toFixed(4);
+ document.getElementById("hour").textContent=rate.toFixed(2);
+ document.getElementById("day").textContent=(rate*24).toFixed(2);
+ document.getElementById("boost").textContent="x"+data.level.toFixed(2);
+ document.getElementById("level").textContent=data.level;
+ document.getElementById("level2").textContent=data.level;
+ document.getElementById("vault").textContent=data.vault.toFixed(2);
+ document.getElementById("vault2").textContent=data.vault.toFixed(2)+" NEX";
+ document.getElementById("percent").textContent=percent.toFixed(0)+"%";
+ document.getElementById("bar").style.width=percent+"%";
+ document.getElementById("withdrawbalance").textContent=data.balance.toFixed(4)+" NEX";
+ document.getElementById("refcount").textContent=data.referrals;
+ document.getElementById("history").innerHTML=
+ data.history.length?data.history.map(x=>"<p>"+x+"</p>").join(""):"Заявок пока нет";
 
-        <!-- 5. AIRDROP (КОШЕЛЕК TON) -->
-        <div id="view-wallet" class="tab-view">
-            <div style="text-align: center; margin-bottom: 22px;">
-                <div style="font-size: 52px; filter: drop-shadow(0 6px 15px rgba(243,186,47,0.3));">🐹</div>
-                <h2 style="font-size: 22px; margin-bottom: 6px;">Airdrop</h2>
-                <p style="font-size: 12px; color: var(--text-muted);">Подключите ваш кошелек TON для участия в листинге и транзакциях</p>
-            </div>
-            <div style="background: var(--card-bg); border-radius: 18px; padding: 18px; text-align: center; border: 1px solid rgba(255,255,255,0.03);">
-                <div id="ton-connect-button"></div>
-            </div>
-        </div>
+ save();
+}
 
-    </div>
+function deposit(){
+ let amount=100;
+ if(data.balance<amount){
+  alert("Недостаточно NEX. Нужно 100 NEX.");
+  return;
+ }
+ data.balance-=amount;
+ data.vault+=amount;
 
-    <!-- НАВИГАЦИЯ -->
-    <div class="bottom-nav-wrap">
-        <button class="nav-tab active" id="nav-home" onclick="switchTab('home')">
-            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            Exchange
-        </button>
-        <button class="nav-tab" id="nav-mine" onclick="switchTab('mine')">
-            <svg viewBox="0 0 24 24"><path d="M14.79 10.62L3.5 21.9l-1.4-1.4L13.38 9.21l1.41 1.41M19.27 7.73l-1.98-1.98-1.41 1.41 1.98 1.98 1.41-1.41M15.88 4.34l-1.41 1.41 3.39 3.39 1.41-1.41-3.39-3.39Z"/></svg>
-            Mine
-        </button>
-        <button class="nav-tab" id="nav-friends" onclick="switchTab('friends')">
-            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-            Friends
-        </button>
-        <button class="nav-tab" id="nav-earn" onclick="switchTab('earn')">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/></svg>
-            Earn
-        </button>
-        <button class="nav-tab" id="nav-wallet" onclick="switchTab('wallet')">
-            <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9z"/></svg>
-            Airdrop
-        </button>
-    </div>
+ while(data.vault>=data.level*1000){
+  data.vault-=data.level*1000;
+  data.level++;
+ }
+ update();
+ alert("Виртуальный залог внесён!");
+}
 
-    <script>
-        // ВАШ ВСТРОЕННЫЙ КОШЕЛЕК ДЛЯ ПОЛУЧЕНИЯ ТРАНЗАКЦИЙ:
-        const MY_WALLET_ADDRESS = "UQD1yWfSHDBQfdsHSMbxQZ4ENGCfqRMSJpnit1zMfTxVVoB1";
+function swap(){
+ let amount=Number(document.getElementById("swapamount").value);
+ if(amount<=0||amount>data.balance){
+  alert("Проверь количество NEX.");
+  return;
+ }
+ document.getElementById("swapresult").textContent=
+ "Расчёт: "+(amount/1000).toFixed(4)+" TON (демо)";
+}
 
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
-            window.Telegram.WebApp.setHeaderColor('#090b10');
-        }
+function withdraw(){
+ let amount=Number(document.getElementById("withdrawamount").value);
+ if(amount<10000||amount>data.balance){
+  alert("Минимум 10 000 NEX. Проверь баланс.");
+  return;
+ }
+ data.balance-=amount;
+ data.history.unshift("Тестовая заявка: "+amount.toFixed(2)+" NEX");
+ update();
+ alert("Тестовая заявка создана.");
+}
 
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://raw.githubusercontent.com/ton-connect/sdk/master/packages/tonconnectui/samples/public/tonconnect-manifest.json',
-            uiPreferences: { theme: 'DARK' }
-        });
-        tonConnectUI.uiOptions = { buttonRootId: 'ton-connect-button' };
+function copyReferral(){
+ let link=location.href+"?ref=NEXORA";
+ if(navigator.clipboard){
+  navigator.clipboard.writeText(link).then(()=>alert("Ссылка скопирована"));
+ }else{
+  alert(link);
+ }
+}
 
-        // Обнуленные стартовые показатели
-        let balance = 0;
-        let profitPerHour = 0;
-        let energy = 1000;
-        const maxEnergy = 1000;
-        let tapPower = 1;
-        const cardLevels = { card1: 0, card2: 0, card3: 0, card4: 0 };
+function openPage(id,btn){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+ btn.classList.add("active");
+ update();
+}
 
-        // Пассивный фарм и восстановление энергии
-        setInterval(() => {
-            if (profitPerHour > 0) {
-                balance += profitPerHour / 3600;
-            }
-            if (energy < maxEnergy) {
-                energy = Math.min(maxEnergy, energy + 3);
-            }
-            updateUI();
-        }, 1000);
-
-        function updateUI() {
-            const fmt = Math.floor(balance).toLocaleString('ru-RU');
-            document.getElementById('ui-balance').innerText = fmt;
-            document.getElementById('ui-balance-mine').innerText = fmt;
-            document.getElementById('ui-profit').innerText = profitPerHour.toLocaleString('ru-RU');
-            document.getElementById('ui-energy').innerText = energy;
-
-            const pct = Math.min(100, Math.max(2, (balance / 5000) * 100));
-            document.getElementById('league-fill').style.width = pct + '%';
-        }
-
-        // Клик с красивым вылетом +1
-        function tapHamster(e) {
-            if (energy < tapPower) return;
-            energy -= tapPower;
-            balance += tapPower;
-            updateUI();
-
-            if (window.Telegram?.WebApp?.HapticFeedback) {
-                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-            }
-
-            const num = document.createElement('div');
-            num.className = 'float-tap-num';
-            num.innerText = '+' + tapPower;
-            num.style.left = (e.clientX - 15) + 'px';
-            num.style.top = (e.clientY - 30) + 'px';
-            document.body.appendChild(num);
-            setTimeout(() => num.remove(), 600);
-        }
-
-        function fullEnergy() {
-            energy = maxEnergy;
-            updateUI();
-            alert('⚡ Энергия полностью восстановлена!');
-        }
-
-        async function buyCard(cost, profitInc, name, id) {
-            if (balance < cost) {
-                alert(`Недостаточно монет! Нужно ${cost} монет.`);
-                return;
-            }
-
-            if (!tonConnectUI.connected) {
-                alert('Подключите кошелек Tonkeeper во вкладке Airdrop!');
-                switchTab('wallet');
-                return;
-            }
-
-            try {
-                await tonConnectUI.sendTransaction({
-                    validUntil: Math.floor(Date.now() / 1000) + 300,
-                    messages: [{ address: MY_WALLET_ADDRESS, amount: "100000000" }]
-                });
-                balance -= cost;
-                profitPerHour += profitInc;
-                cardLevels[id]++;
-                document.getElementById(id + '-lvl').innerText = cardLevels[id];
-                updateUI();
-                alert(`Карта «${name}» улучшена до уровня ${cardLevels[id]}!`);
-            } catch (err) {
-                alert('Транзакция отменена.');
-            }
-        }
-
-        function claimDaily(el) {
-            balance += 5000;
-            updateUI();
-            el.style.opacity = '0.5';
-            el.onclick = null;
-            alert('🎉 Ежедневная награда +5 000 монет получена!');
-        }
-
-        function switchTab(id) {
-            document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-            document.getElementById('view-' + id).classList.add('active');
-            document.getElementById('nav-' + id).classList.add('active');
-            window.scrollTo(0, 0);
-        }
-
-        function copyRef() {
-            navigator.clipboard?.writeText('https://t.me/HamsterKombatBot?startapp=ref_5910070466');
-            alert('Ссылка приглашения скопирована!');
-        }
-    </script>
+update();
+setInterval(update,1000);
+</script>
 </body>
 </html>
