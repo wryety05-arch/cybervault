@@ -9,10 +9,9 @@
     <style>
         :root {
             --bg-color: #0b0e17;
-            --card-bg: rgba(20, 25, 42, 0.75);
-            --border-color: rgba(140, 82, 255, 0.2);
-            --primary-gradient: linear-gradient(135deg, #8a2be2 0%, #00d2ff 100%);
-            --accent-purple: #9d4edd;
+            --card-bg: rgba(20, 25, 42, 0.78);
+            --card-border: rgba(138, 43, 226, 0.28);
+            --primary-grad: linear-gradient(135deg, #8a2be2 0%, #00d2ff 100%);
             --accent-cyan: #00f2fe;
             --text-main: #ffffff;
             --text-muted: #8b9bb4;
@@ -30,76 +29,74 @@
 
         body {
             background-color: var(--bg-color);
-            background-image: radial-gradient(circle at 50% -10%, #1a103c 0%, var(--bg-color) 70%);
+            /* Точно воссозданный космический градиент из туманностей как на ваших скриншотах */
+            background-image: 
+                radial-gradient(circle at 50% -10%, rgba(138, 43, 226, 0.4) 0%, transparent 55%),
+                radial-gradient(circle at 85% 35%, rgba(0, 210, 255, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 15% 70%, rgba(114, 9, 183, 0.2) 0%, transparent 50%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             padding-bottom: 75px;
         }
 
-        /* Шапка */
-        .header {
+        /* Верхняя шапка */
+        .top-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
             background: rgba(11, 14, 23, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .brand {
+        .brand-box {
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 15px;
             font-weight: 700;
-            font-size: 16px;
         }
 
-        .brand-logo {
-            background: var(--primary-gradient);
+        .vlt-tag {
+            background: var(--primary-grad);
             padding: 4px 8px;
             border-radius: 8px;
-            font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
+            font-weight: 900;
+            box-shadow: 0 0 12px rgba(138, 43, 226, 0.5);
         }
 
-        .header-right {
+        .header-controls {
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .pill {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
+        .lang-pill, .profile-pill {
+            background: rgba(20, 25, 42, 0.85);
+            border: 1px solid var(--card-border);
             border-radius: 20px;
-            padding: 5px 10px;
-            font-size: 12px;
-            cursor: pointer;
+            padding: 4px 10px;
+            font-size: 11px;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
         }
 
-        .profile-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 4px 10px 4px 4px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .profile-pill {
+            padding: 3px 8px 3px 3px;
             cursor: pointer;
         }
 
-        .avatar {
+        .avatar-circle {
             width: 24px;
             height: 24px;
-            background: var(--primary-gradient);
+            background: var(--primary-grad);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -109,7 +106,7 @@
         }
 
         .content {
-            padding: 16px;
+            padding: 14px;
             flex: 1;
             overflow-y: auto;
         }
@@ -122,82 +119,45 @@
             display: block;
         }
 
-        /* Карточки */
+        /* Карточки с глубоким размытием и неоновой обводкой */
         .card {
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
             padding: 16px;
             margin-bottom: 12px;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
         }
 
-        .hero-banner {
-            background: linear-gradient(135deg, rgba(74, 20, 140, 0.4) 0%, rgba(15, 20, 35, 0.9) 100%);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border: 1px solid var(--border-color);
+        /* Баннер версии в стиле скриншота */
+        .banner-card {
+            background: linear-gradient(135deg, rgba(114, 9, 183, 0.35) 0%, rgba(20, 25, 42, 0.9) 100%);
+            border: 1px solid rgba(138, 43, 226, 0.3);
         }
 
-        .btn {
+        /* Кнопка сбора награды */
+        .btn-collect {
             width: 100%;
             padding: 14px;
-            border-radius: 12px;
+            border-radius: 14px;
             border: none;
-            background: var(--primary-gradient);
+            background: var(--primary-grad);
             color: white;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 15px;
             cursor: pointer;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+            box-shadow: 0 4px 20px rgba(138, 43, 226, 0.45);
+            letter-spacing: 0.3px;
         }
 
-        .btn:active {
-            opacity: 0.8;
+        .btn-collect:active {
+            opacity: 0.85;
+            transform: scale(0.99);
         }
 
-        /* Навигация снизу (6 кнопок как на скринах) */
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 65px;
-            background: rgba(11, 14, 23, 0.95);
-            backdrop-filter: blur(15px);
-            border-top: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 9px;
-            cursor: pointer;
-            gap: 3px;
-            flex: 1;
-        }
-
-        .nav-item.active {
-            color: var(--accent-cyan);
-        }
-
-        .nav-item svg {
-            width: 18px;
-            height: 18px;
-            fill: currentColor;
-        }
-
-        /* Статы сеткой */
+        /* 4 блока статистики */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -207,32 +167,80 @@
 
         .stat-card {
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
             padding: 10px 4px;
             text-align: center;
+            backdrop-filter: blur(8px);
         }
 
-        .sub-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 14px;
-            overflow-x: auto;
+        .stat-title {
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
         }
 
-        .sub-tab {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 8px 14px;
-            border-radius: 20px;
+        .stat-val {
             font-size: 12px;
-            white-space: nowrap;
-            cursor: pointer;
+            font-weight: 700;
+            color: #fff;
         }
 
-        .sub-tab.active {
-            background: var(--primary-gradient);
-            border-color: transparent;
+        /* Линейка прогресса уровня */
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--primary-grad);
+            border-radius: 4px;
+        }
+
+        /* Нижняя навигация */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 62px;
+            background: rgba(11, 14, 23, 0.95);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 9px;
+            cursor: pointer;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .nav-btn.active {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .nav-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
         }
 
         #ton-connect-button {
@@ -244,140 +252,112 @@
 </head>
 <body>
 
-    <!-- Шапка приложения -->
-    <div class="header">
-        <div class="brand">
-            <div class="brand-logo">VLT</div>
+    <!-- ВЕРХНЯЯ ШАПКА -->
+    <div class="top-header">
+        <div class="brand-box">
+            <div class="vlt-tag">VLT</div>
             <span>CyberVault Miner</span>
         </div>
-        <div class="header-right">
-            <div class="pill">🇷🇺 RU</div>
-            <div class="profile-btn" onclick="switchTab('withdraw')">
-                <div class="avatar">А</div>
+        <div class="header-controls">
+            <div class="lang-pill">🇷🇺 RU</div>
+            <div class="profile-pill" onclick="switchTab('withdraw')">
+                <div class="avatar-circle">А</div>
                 <div>
-                    <div style="font-size:10px; font-weight:bold;">Артур</div>
-                    <div style="font-size:8px; color:var(--text-muted);">LVL 500</div>
+                    <div style="font-size: 10px; font-weight: bold; line-height: 1;">Артур</div>
+                    <div style="font-size: 8px; color: var(--text-muted);">LVL <span id="ui-lvl-num">1</span></div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="content">
-        <!-- 1. ГЛАВНАЯ -->
+        <!-- 1. ГЛАВНАЯ СТРАНИЦА -->
         <div id="view-home" class="tab-view active">
-            <div class="hero-banner">
-                <div style="font-size: 18px; font-weight: 800; margin-bottom: 4px;">CyberVault v1.2</div>
+            <!-- Баннер версии -->
+            <div class="card banner-card">
+                <div style="font-size: 18px; font-weight: 800; margin-bottom: 3px;">CyberVault v1.2</div>
                 <div style="font-size: 12px; color: var(--accent-cyan);">Официальное Web3-приложение</div>
+                <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Добывай · Строй · Улучшай · Исследуй</div>
             </div>
 
-            <!-- Баланс -->
-            <div class="card" onclick="switchTab('withdraw')" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <div style="font-size: 11px; color: var(--text-muted);">БАЛАНС У ДОДАТКУ</div>
-                    <div style="font-size: 24px; font-weight: 800; color: #fff; margin-top: 2px;">
-                        <span id="ui-balance">1025.0400</span> <span style="font-size: 14px; color: var(--accent-purple);">VLT</span>
-                    </div>
+            <!-- Баланс в приложении (Обнулен) -->
+            <div class="card" onclick="switchTab('withdraw')" style="cursor: pointer;">
+                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">БАЛАНС У ДОДАТКУ</div>
+                <div style="font-size: 26px; font-weight: 800; color: #fff;">
+                    <span id="ui-balance">0.0000</span> <span style="font-size: 14px; color: #a855f7;">VLT</span>
                 </div>
-                <div style="color: var(--text-muted);">›</div>
             </div>
 
-            <!-- Майнинг блок -->
-            <div class="card" style="background: linear-gradient(160deg, rgba(20,30,50,0.9), rgba(10,15,25,0.95)); border: 1px solid rgba(0,242,254,0.3);">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                    <div style="font-size: 13px; font-weight: bold; color: #00f59b;">● Активный майнинг</div>
-                    <div style="font-size: 11px; background: rgba(255,215,0,0.15); color: #ffd700; padding: 2px 8px; border-radius: 10px;">Буст x1.0</div>
+            <!-- Блок активного майнинга (Обнулен) -->
+            <div class="card" style="border: 1px solid rgba(0, 242, 254, 0.35); background: linear-gradient(160deg, rgba(20, 25, 42, 0.9) 0%, rgba(11, 14, 23, 0.95) 100%);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="font-size: 12px; font-weight: bold; color: #00f59b;">● Активный майнинг</div>
+                    <div style="font-size: 11px; background: rgba(255, 215, 0, 0.12); color: #ffd700; padding: 3px 9px; border-radius: 10px; font-weight: 600;">Буст x1.0</div>
                 </div>
-                <div style="font-size: 26px; font-weight: 800; color: var(--accent-cyan); margin-bottom: 4px;">
-                    +<span id="ui-mined">203.4405</span> VLT
+                <div style="font-size: 28px; font-weight: 800; color: var(--accent-cyan); margin-bottom: 4px;">
+                    +<span id="ui-mined">0.0000</span> VLT
                 </div>
-                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 14px;">До Уровня 501: +222973 VLT (20%)</div>
-                <button class="btn" onclick="claimVlt()">ЗІБРАТИ НАМАЙНЕНЕ</button>
+                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 16px;">До Уровня 2: +116 VLT (0%)</div>
+                <button class="btn-collect" onclick="claimVlt()">ЗІБРАТИ НАМАЙНЕНЕ</button>
             </div>
 
-            <!-- 4 карточки статов -->
+            <!-- 4 блока статистики -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div style="font-size:9px; color:var(--text-muted);">На годину</div>
-                    <div style="font-size:12px; font-weight:bold; color:var(--accent-cyan);">9270.7</div>
+                    <div class="stat-title">В час</div>
+                    <div class="stat-val" style="color: var(--accent-cyan);">25.0</div>
                 </div>
                 <div class="stat-card">
-                    <div style="font-size:9px; color:var(--text-muted);">На добу</div>
-                    <div style="font-size:12px; font-weight:bold; color:var(--accent-cyan);">~222497</div>
+                    <div class="stat-title">В сутки</div>
+                    <div class="stat-val" style="color: var(--accent-cyan);">~600</div>
                 </div>
                 <div class="stat-card">
-                    <div style="font-size:9px; color:var(--text-muted);">Буст</div>
-                    <div style="font-size:12px; font-weight:bold; color:var(--accent-cyan);">x1.0</div>
+                    <div class="stat-title">Буст</div>
+                    <div class="stat-val" style="color: var(--accent-cyan);">x1.0</div>
                 </div>
                 <div class="stat-card">
-                    <div style="font-size:9px; color:var(--text-muted);">Лига</div>
-                    <div style="font-size:11px; font-weight:bold; color:#e6a15c;">Бронза</div>
+                    <div class="stat-title">Лига</div>
+                    <div class="stat-val" style="color: #e6a15c;">Бронза</div>
                 </div>
             </div>
 
-            <!-- SBT Vault плашка -->
-            <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <div style="font-size: 12px; font-weight: bold;">Бронзовая лига</div>
-                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Застава в SBT Vault: 20949484 VLT</div>
+            <!-- Карточка уровня (Обнулена до 1) -->
+            <div class="card" onclick="switchTab('withdraw')" style="cursor: pointer;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <div style="font-size: 12px; font-weight: bold;">Следующий уровень: 2</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">0 / 116 VLT</div>
                 </div>
-                <div style="color: var(--text-muted);">›</div>
+                <div class="progress-track"><div class="progress-fill" id="lvl-progress"></div></div>
+                <div style="font-size: 10px; color: var(--text-muted);">Держите 116 VLT в кошельке, чтобы достичь уровня 2</div>
             </div>
         </div>
 
         <!-- 2. МАЙНИНГ -->
         <div id="view-mining" class="tab-view">
             <div class="card">
-                <div style="font-weight: 800; color: var(--accent-cyan); margin-bottom: 4px;">Dynamic SBT Vault (TEP-85)</div>
-                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Ончейн-депозит и ускорение</div>
-                <div style="font-size: 12px;">Залог в Vault: <b style="color:#fff;">20 949 484 VLT</b></div>
+                <div style="font-weight: 800; color: var(--accent-cyan); font-size: 14px; margin-bottom: 4px;">Dynamic SBT Vault (TEP-85)</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Ончейн-депозит и ускорение</div>
+                <div style="font-size: 12px;">Залог: <b style="color:#fff;">0 VLT</b></div>
             </div>
-            <div class="card" style="text-align:center;">
+            <div class="card" style="text-align: center;">
                 <div style="font-size: 11px; color: var(--text-muted);">ДОСТУПНО К СБОРУ</div>
-                <div style="font-size: 26px; font-weight: 800; color: var(--accent-cyan); margin: 10px 0;">+<span id="ui-mined-2">203.4405</span> VLT</div>
-                <button class="btn" onclick="claimVlt()">ЗІБРАТИ НАМАЙНЕННЕ</button>
+                <div style="font-size: 26px; font-weight: 800; color: var(--accent-cyan); margin: 10px 0;">+<span id="ui-mined-2">0.0000</span> VLT</div>
+                <button class="btn-collect" onclick="claimVlt()">ЗІБРАТИ НАМАЙНЕНЕ</button>
             </div>
         </div>
 
         <!-- 3. СТАНЦИЯ -->
         <div id="view-station" class="tab-view">
-            <div class="hero-banner">
+            <div class="card">
                 <div style="font-size: 16px; font-weight: bold;">Станция Rift</div>
                 <div style="font-size: 11px; color: var(--text-muted);">Развивайте мощность добычи</div>
             </div>
-            <div class="sub-tabs">
-                <div class="sub-tab active" id="stab-floors" onclick="switchStationSub('floors')">Этажи</div>
-                <div class="sub-tab" id="stab-boxes" onclick="switchStationSub('boxes')">Ящики VLT</div>
-                <div class="sub-tab" id="stab-synth" onclick="switchStationSub('synth')">Синтез</div>
-            </div>
-            <div id="subview-floors">
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:13px;">
-                        <span>Этаж #1</span>
-                        <span style="color:var(--accent-cyan);">+1 VLT/h</span>
-                    </div>
-                    <div style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">Spark · Обычный</div>
-                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:6px; text-align:center;">
-                        <div style="background:rgba(0,0,0,0.3); padding:8px 2px; border-radius:8px; font-size:9px; color:var(--text-muted);">0/2<br>Чип</div>
-                        <div style="background:rgba(0,0,0,0.3); padding:8px 2px; border-radius:8px; font-size:9px; color:var(--text-muted);">0/2<br>Энергия</div>
-                        <div style="background:rgba(0,0,0,0.3); padding:8px 2px; border-radius:8px; font-size:9px; color:var(--text-muted);">0/2<br>Кулер</div>
-                        <div style="background:rgba(0,0,0,0.3); padding:8px 2px; border-radius:8px; font-size:9px; color:var(--text-muted);">0/2<br>Кристалл</div>
-                    </div>
-                </div>
-            </div>
-            <div id="subview-boxes" style="display:none;">
-                <div class="card">
-                    <h3>Малый бокс</h3>
-                    <p style="font-size:11px; color:var(--text-muted); margin:6px 0;">Один случайный модуль станции.</p>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                        <div style="font-size:16px; font-weight:bold;">450 VLT</div>
-                        <button class="btn" style="width:auto; padding:10px 16px;" onclick="buyLootbox(450, 'Малый бокс')">Открыть</button>
-                    </div>
-                </div>
-            </div>
-            <div id="subview-synth" style="display:none;">
-                <div class="card">
-                    <div style="font-weight:bold; font-size:13px;">Мастерская синтеза</div>
-                    <p style="font-size:11px; color:var(--text-muted); margin-top:4px;">Объедините 3 одинаковых модуля.</p>
+            <div class="card">
+                <h3>Малый бокс</h3>
+                <p style="font-size: 11px; color: var(--text-muted); margin: 6px 0;">Один случайный модуль станции.</p>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                    <div style="font-size: 16px; font-weight: bold;">450 VLT</div>
+                    <button class="btn-collect" style="width:auto; padding:10px 18px;" onclick="buyLootbox(450, 'Малый бокс')">Открыть</button>
                 </div>
             </div>
         </div>
@@ -385,62 +365,61 @@
         <!-- 4. РЫНОК -->
         <div id="view-market" class="tab-view">
             <div class="card">
-                <div style="font-size:11px; color:var(--text-muted);">Рыночная цена · 1 VLT</div>
-                <div style="font-size:20px; font-weight:bold; margin:4px 0;">0,015829 TON</div>
-                <button class="btn" style="margin-top:10px;" onclick="alert('Переход на STON.fi')">Открыть STON.fi</button>
+                <div style="font-size: 11px; color: var(--text-muted);">Рыночная цена · 1 VLT</div>
+                <div style="font-size: 20px; font-weight: bold; margin: 6px 0;">0,015829 TON</div>
+                <button class="btn-collect" style="margin-top: 10px;" onclick="alert('Переход на STON.fi')">Открыть STON.fi</button>
             </div>
         </div>
 
         <!-- 5. ДРУЗЬЯ -->
         <div id="view-friends" class="tab-view">
-            <div class="hero-banner">
+            <div class="card">
                 <div style="font-size: 16px; font-weight: bold;">Приглашай и зарабатывай</div>
-                <div style="font-size: 11px; color: var(--accent-cyan); margin-top: 2px;">5% от добычи друзей</div>
+                <div style="font-size: 11px; color: var(--accent-cyan); margin-top: 3px;">5% от добычи друзей</div>
             </div>
             <div class="card">
-                <div style="font-size: 11px; color: var(--text-muted);">Ваша пригласительная ссылка</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Ваша реферальная ссылка</div>
                 <div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:8px; font-size:10px; color:var(--text-muted); margin:8px 0; word-break:break-all;">
                     https://t.me/CyberVaultMinerBot?startapp=ref_5910070466
                 </div>
-                <button class="btn" onclick="copyRef()">Копировать ссылку</button>
+                <button class="btn-collect" onclick="copyRef()">Копировать ссылку</button>
             </div>
         </div>
 
         <!-- 6. ВЫВОД -->
         <div id="view-withdraw" class="tab-view">
-            <div class="card" style="text-align:center;">
-                <div style="font-size:11px; color:var(--text-muted);">БАЛАНС В БЛОКЧЕЙНЕ</div>
-                <div style="font-size:22px; font-weight:800; margin:6px 0;">0,0000 VLT</div>
-                <p style="font-size: 11px; color: var(--text-muted); margin: 10px 0;">Все транзакции уходят на ваш привязанный кошелек</p>
-                <!-- Сюда встанет кнопка TonConnect -->
+            <div class="card" style="text-align: center;">
+                <div style="font-size: 11px; color: var(--text-muted);">БАЛАНС В БЛОКЧЕЙНЕ</div>
+                <div style="font-size: 24px; font-weight: 800; margin: 8px 0;">0,0000 VLT</div>
+                <p style="font-size: 11px; color: var(--text-muted); margin: 8px 0;">Все транзакции уходят на ваш привязанный кошелек</p>
                 <div id="ton-connect-button"></div>
             </div>
         </div>
     </div>
 
-    <!-- Нижняя навигация (строго 6 кнопок из вашего меню) -->
-    <nav class="nav-bar">
-        <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
+    <!-- Нижняя панель навигации -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" id="nav-home" onclick="switchTab('home')">
             <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
             Главная
         </button>
-        <button class="nav-item" id="nav-mining" onclick="switchTab('mining')">
+        <button class="nav-btn" id="nav-mining" onclick="switchTab('mining')">
             <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H5v2h14v3h2V6m-3-4H6v2h12V2Z"/></svg>
             Майнинг
         </button>
-        <button class="nav-item" id="nav-station" onclick="switchTab('station')">
+        <button class="nav-btn" id="nav-station" onclick="switchTab('station')">
             <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
             Станция
         </button>
-        <button class="nav-item" id="nav-market" onclick="switchTab('market')">
+        <button class="nav-btn" id="nav-market" onclick="switchTab('market')">
             <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
             Рынок
         </button>
-        <button class="nav-item" id="nav-friends" onclick="switchTab('friends')">
+        <button class="nav-btn" id="nav-friends" onclick="switchTab('friends')">
             <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z"/></svg>
             Друзья
         </button>
-        <button class="nav-item" id="nav-withdraw" onclick="switchTab('withdraw')">
+        <button class="nav-btn" id="nav-withdraw" onclick="switchTab('withdraw')">
             <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9z"/></svg>
             Вывод
         </button>
@@ -461,9 +440,11 @@
         });
         tonConnectUI.uiOptions = { buttonRootId: 'ton-connect-button' };
 
-        let balance = 1025.0400;
-        let mined = 203.4405;
-        const ratePerSec = 9270.7 / 3600;
+        // Обнуленные стартовые показатели (Уровень 1, баланс 0)
+        let balance = 0.0000;
+        let mined = 0.0000;
+        let level = 1;
+        const ratePerSec = 25.0 / 3600; // Базовая скорость 1 уровня
 
         setInterval(() => {
             mined += ratePerSec;
@@ -472,22 +453,23 @@
             document.getElementById('ui-mined-2').innerText = f;
         }, 1000);
 
-        function updateBalanceUI() {
+        function updateUI() {
             document.getElementById('ui-balance').innerText = balance.toFixed(4);
+            document.getElementById('ui-lvl-num').innerText = level;
         }
 
         function claimVlt() {
             balance += mined;
             mined = 0;
-            updateBalanceUI();
+            updateUI();
             document.getElementById('ui-mined').innerText = '0.0000';
             document.getElementById('ui-mined-2').innerText = '0.0000';
-            alert('Намайненное успешно собрано!');
+            alert('Намайнене успішно зібрано!');
         }
 
         async function buyLootbox(price, name) {
             if (!tonConnectUI.connected) {
-                alert('Сначала подключите кошелек Tonkeeper в разделе «Вывод»!');
+                alert('Підключіть гаманець Tonkeeper у розділі «Вивод»!');
                 switchTab('withdraw');
                 return;
             }
@@ -497,31 +479,24 @@
                     messages: [{ address: MY_WALLET_ADDRESS, amount: "100000000" }]
                 });
                 balance -= price;
-                updateBalanceUI();
-                alert(`Успешно куплено: ${name}!`);
+                updateUI();
+                alert(`Успішно куплено: ${name}!`);
             } catch (e) {
-                alert('Транзакция отменена.');
+                alert('Транзакцію скасовано.');
             }
         }
 
         function switchTab(id) {
             document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('view-' + id).classList.add('active');
             document.getElementById('nav-' + id).classList.add('active');
             window.scrollTo(0, 0);
         }
 
-        function switchStationSub(sub) {
-            ['floors', 'boxes', 'synth'].forEach(id => {
-                document.getElementById('subview-' + id).style.display = (id === sub) ? 'block' : 'none';
-                document.getElementById('stab-' + id).classList.toggle('active', id === sub);
-            });
-        }
-
         function copyRef() {
             navigator.clipboard?.writeText('https://t.me/CyberVaultMinerBot?startapp=ref_5910070466');
-            alert('Ссылка скопирована!');
+            alert('Посилання скопійовано!');
         }
     </script>
 </body>
