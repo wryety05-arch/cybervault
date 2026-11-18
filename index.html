@@ -1,303 +1,391 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXORA Mining</title>
+<title>NEXORA MINING</title>
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;background:#080b12;color:#fff;
- font-family:Arial,sans-serif;padding:20px 16px 100px;
+margin:0;
+background:#080b12;
+color:#fff;
+font-family:Arial,sans-serif;
+padding-bottom:100px;
 }
-header{display:flex;align-items:center;gap:12px;margin:10px 0 25px}
+header{
+padding:25px 20px;
+display:flex;
+align-items:center;
+gap:15px;
+}
 .logo{
- width:55px;height:55px;border:2px solid #e6a52e;
- border-radius:16px;display:grid;place-items:center;
- color:#f7b633;font-size:30px;font-weight:bold;
- box-shadow:0 0 20px #d99a2533;
+width:65px;
+height:65px;
+border:3px solid #f4b52e;
+border-radius:20px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:35px;
+color:#f4b52e;
 }
-.brand{font-size:22px;font-weight:bold}
-.sub{color:#d9a638;font-size:12px;margin-top:5px}
+h1{font-size:24px;margin:0}
+.gold{color:#f4b52e}
+.green{color:#20d6a0}
 .card{
- background:#10141d;border:1px solid #272c38;
- border-radius:23px;padding:20px;margin-bottom:17px;
+background:#111620;
+border:1px solid #29303c;
+border-radius:25px;
+padding:22px;
+margin:15px;
 }
-.caption{color:#9299a9;font-size:14px}
-.balance{font-size:35px;font-weight:bold;margin-top:12px}
-.gold{color:#f5b331}
-.green{color:#22d99b}
-.topline{display:flex;justify-content:space-between;align-items:center}
-.status{color:#20d99a;font-size:14px}
-.mining{border:1px solid #b9872f}
-.amount{font-size:34px;font-weight:bold;margin:24px 0}
-.progress{
- height:9px;background:#252b35;border-radius:20px;
- overflow:hidden;margin:15px 0;
-}
-.bar{height:100%;width:0;background:linear-gradient(90deg,#19d69a,#f5b331)}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.stat{background:#171c27;padding:13px 8px;border-radius:15px;text-align:center}
-.stat b{display:block;margin-top:12px;font-size:17px}
-button{
- border:0;border-radius:15px;padding:15px;
- font-size:15px;font-weight:bold;cursor:pointer;
-}
-.primary{background:linear-gradient(110deg,#ffd04a,#e58c16);color:#111;width:100%}
-.secondary{background:#1a202c;color:#f3b538;border:1px solid #363e4d}
-.nav{
- position:fixed;bottom:0;left:0;width:100%;
- background:#10141d;border-top:1px solid #303644;
- display:flex;justify-content:space-around;padding:12px 3px 20px;
-}
-.nav button{background:transparent;color:#8991a2;padding:8px 5px;font-size:12px}
-.nav button.active{color:#f5b331}
-.page{display:none}
-.page.active{display:block}
-input{
- width:100%;padding:17px;border-radius:14px;
- background:#080b12;color:white;border:1px solid #303644;
- font-size:18px;margin:15px 0;
-}
-.level{font-size:27px;color:#f5b331;font-weight:bold}
-.info{line-height:1.7;color:#a9b0be;font-size:14px}
 </style>
 </head>
 <body>
-
 <header>
- <div class="logo">N</div>
- <div>
-  <div class="brand">NEXORA MINING</div>
-  <div class="sub">OFFICIAL WEB3 APP</div>
- </div>
+  <div class="logo">N</div>
+  <div>
+    <h1>NEXORA MINING</h1>
+    <div class="gold">OFFICIAL WEB3 APP</div>
+  </div>
+  <button onclick="changeLang()" style="margin-left:auto">RU / UK</button>
 </header>
 
-<!-- MINING -->
-<section id="mining" class="page active">
- <div class="card">
-  <div class="caption">Баланс в приложении</div>
-  <div class="balance"><span id="balance">0.00</span>
-   <span class="gold" style="font-size:18px">NEX</span>
-  </div>
- </div>
+<div class="card">
+  <div id="balanceTitle">Баланс в приложении</div>
+  <h1 style="font-size:42px;margin-top:20px">
+    <span id="balance">0.0000</span>
+    <span class="gold">NEX</span>
+  </h1>
+</div>
 
- <div class="card mining">
-  <div class="topline">
-   <b>⛏ Активный майнинг</b>
-   <span class="status">● Работает</span>
+<div class="card" style="border-color:#e5a92e">
+  <h2>⛏ Активный майнинг</h2>
+  <p class="green">● <span id="status">Работает</span></p>
+  <h1 class="green" style="font-size:42px">
+    +<span id="earned">0.0000</span> NEX
+  </h1>
+  <div style="background:#29303c;height:12px;border-radius:20px">
+    <div id="progress" style="background:#20d6a0;width:0%;height:12px;border-radius:20px"></div>
   </div>
-  <div class="amount green">+<span id="earned">0.0000</span> NEX</div>
-  <div class="progress"><div class="bar" id="bar"></div></div>
-  <div class="topline caption">
-   <span>До следующего уровня</span>
-   <b class="gold" id="percent">0%</b>
-  </div>
-  <div class="caption" style="margin-top:12px">
-   Уровень <span id="level">1</span>
-  </div>
- </div>
+  <p>До следующего уровня: <span id="percent">0</span>%</p>
+  <p>Уровень <span id="level">1</span></p>
+</div>
 
- <div class="stats">
-  <div class="stat">
-   <span class="caption">На час</span>
-   <b class="green" id="hour">10</b>
-   <span class="caption">NEX</span>
+<div style="display:flex;gap:10px;margin:15px">
+  <div class="card" style="flex:1;margin:0;text-align:center">
+    На час
+    <h2 class="green">10 NEX</h2>
   </div>
-  <div class="stat">
-   <span class="caption">На сутки</span>
-   <b class="green" id="day">240</b>
-   <span class="caption">NEX</span>
+  <div class="card" style="flex:1;margin:0;text-align:center">
+    На сутки
+    <h2 class="green">240 NEX</h2>
   </div>
-  <div class="stat">
-   <span class="caption">Буст</span>
-   <b class="gold" id="boost">x1.00</b>
-  </div>
- </div>
+</div>
 
- <div class="card" style="margin-top:17px">
-  <div class="topline">
-   <b>🛡 Dynamic Vault</b>
-   <span class="gold">NEX Vault</span>
-  </div>
-  <div class="amount"><span id="vault">0</span> NEX</div>
-  <p class="info">Виртуальный залог для повышения уровня и скорости майнинга.</p>
-  <button class="primary" onclick="deposit()">Увеличить залог</button>
- </div>
+<div class="card">
+  <h2>🎁 Ежедневный бонус</h2>
+  <p>Получай бонус каждый день</p>
+  <button onclick="dailyBonus()">Забрать бонус</button>
+  <p id="bonusMessage"></p>
+</div>
+
+<style>
+button{
+border:0;
+border-radius:14px;
+padding:14px 18px;
+background:linear-gradient(135deg,#ffe18a,#e9a51e);
+color:#151515;
+font-weight:bold;
+width:100%;
+font-size:15px;
+margin-top:12px;
+}
+input,select{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:1px solid #394252;
+background:#080d16;
+color:white;
+margin-top:10px;
+font-size:15px;
+}
+.page{display:none}
+.page.active{display:block}
+.nav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:#111722;
+display:flex;
+justify-content:space-around;
+padding:10px 2px;
+border-top:1px solid #303744;
+}
+.nav button{
+width:19%;
+padding:10px 2px;
+margin:0;
+font-size:11px;
+background:#202a38;
+color:white;
+}
+.nav button.selected{
+background:#e9a51e;
+color:#111;
+}
+</style>
+
+<section id="vault" class="page">
+<div class="card">
+<h2>🛡 NEX Vault</h2>
+<p class="gold">Твоё хранилище</p>
+<h1><span id="vaultBalance">0.0000</span> NEX</h1>
+<p>Уровень Vault: <b id="vaultLevel">1</b></p>
+<p>Скорость майнинга: <b id="vaultRate">10</b> NEX/час</p>
+</div>
+<div class="card">
+<h3>Пополнить Vault</h3>
+<input id="depositAmount" type="number" placeholder="Количество NEX">
+<button onclick="deposit()">Пополнить</button>
+</div>
+<div class="card">
+<h3>Вернуть средства</h3>
+<input id="returnAmount" type="number" placeholder="Количество NEX">
+<button onclick="withdrawVault()">Вернуть на баланс</button>
+</div>
+<div class="card">
+<h3>⚡ Уровни</h3>
+<p>Каждые 100 NEX в Vault повышают уровень.</p>
+<p>Следующий уровень: <span id="nextLevel">100</span> NEX</p>
+</div>
 </section>
 
-<!-- VAULT -->
-<section id="vaultpage" class="page">
- <h2>Dynamic Vault</h2>
- <div class="card">
-  <div class="caption">Твой виртуальный залог</div>
-  <div class="balance gold" id="vault2">0 NEX</div>
-  <p class="info">В демонстрационной версии залог существует только внутри приложения.</p>
-  <button class="primary" onclick="deposit()">Внести 100 NEX</button>
- </div>
- <div class="card">
-  <div class="level">Уровень <span id="level2">1</span></div>
-  <p class="info">Чем выше уровень, тем больше скорость виртуального майнинга.</p>
- </div>
-</section>
-
-<!-- EXCHANGE -->
 <section id="exchange" class="page">
- <h2>Обмен</h2>
- <div class="card">
-  <p class="caption">Обмен NEX</p>
-  <input type="number" id="swapamount" placeholder="Количество NEX">
-  <p class="info">Демонстрационный курс: 1 TON = 1000 NEX</p>
-  <button class="primary" onclick="swap()">Рассчитать обмен</button>
-  <h3 id="swapresult" class="gold"></h3>
-  <p class="info">Реальный обмен пока не подключён.</p>
- </div>
+<div class="card">
+<h2>💱 Обмен NEX</h2>
+<p>Демонстрационный обмен</p>
+<p class="gold">Курс: 1000 NEX = 1 TON</p>
+<input id="exchangeAmount" type="number" placeholder="Количество NEX">
+<p>Получишь: <b id="exchangeResult">0 TON</b></p>
+<button onclick="exchange()">Обменять</button>
+</div>
 </section>
 
-<!-- FRIENDS -->
 <section id="friends" class="page">
- <h2>Друзья</h2>
- <div class="card">
-  <h3 class="gold">Реферальная программа</h3>
-  <p class="info">Приглашай друзей и получай демонстрационные бонусы.</p>
-  <div class="balance" id="refcount">0</div>
-  <p class="caption">Приглашено друзей</p>
-  <button class="primary" onclick="copyReferral()">Копировать ссылку</button>
- </div>
+<div class="card">
+<h2>👥 Друзья</h2>
+<p>Приглашай друзей в NEXORA</p>
+<h1 class="gold">+500 NEX</h1>
+<p>Демонстрационная награда за приглашение.</p>
+<p>Твой код:</p>
+<h3 id="refCode">NEXORA591007</h3>
+<button onclick="copyCode()">Скопировать код</button>
+</div>
+<div class="card">
+<h3>Приглашено друзей</h3>
+<h1 id="friendsCount">0</h1>
+</div>
 </section>
 
-<!-- WITHDRAW -->
 <section id="withdraw" class="page">
- <h2>Вывод средств</h2>
- <div class="card">
-  <div class="caption">Доступный баланс</div>
-  <div class="balance" id="withdrawbalance">0 NEX</div>
-  <input type="number" id="withdrawamount" placeholder="Количество NEX">
-  <button class="primary" onclick="withdraw()">Создать тестовую заявку</button>
-  <p class="info">Это демонстрационная заявка. Реальные переводы не выполняются.</p>
- </div>
- <div class="card">
-  <h3>История заявок</h3>
-  <div id="history" class="info">Заявок пока нет</div>
- </div>
+<div class="card">
+<h2>💎 Вывод NEX</h2>
+<p>Доступный баланс:</p>
+<h1><span id="withdrawBalance">0</span> NEX</h1>
+<p class="gold">Демонстрационная заявка. Реальные переводы пока не подключены.</p>
+<input id="withdrawAmount" type="number" placeholder="Количество NEX">
+<input id="walletAddress" placeholder="Публичный TON-адрес">
+<button onclick="requestWithdraw()">Создать заявку</button>
+</div>
+<div class="card">
+<h3>История операций</h3>
+<div id="history">Операций пока нет</div>
+</div>
 </section>
 
 <nav class="nav">
- <button class="active" onclick="openPage('mining',this)">⛏<br>Mining</button>
- <button onclick="openPage('exchange',this)">⇄<br>Обмен</button>
- <button onclick="openPage('vaultpage',this)">🛡<br>Vault</button>
- <button onclick="openPage('friends',this)">♧<br>Друзья</button>
- <button onclick="openPage('withdraw',this)">▣<br>Вывод</button>
+<button class="selected" onclick="openPage('mining',this)">⛏<br>Mining</button>
+<button onclick="openPage('vault',this)">🛡<br>Vault</button>
+<button onclick="openPage('exchange',this)">💱<br>Exchange</button>
+<button onclick="openPage('friends',this)">👥<br>Friends</button>
+<button onclick="openPage('withdraw',this)">💎<br>Wallet</button>
 </nav>
 
 <script>
-const KEY="nexora_demo_v1";
+const $=id=>document.getElementById(id);
 
-let data=JSON.parse(localStorage.getItem(KEY)||"null")||{
+let data={
  balance:0,
  vault:0,
- level:1,
- referrals:0,
- history:[],
- last:Date.now()
+ pending:0,
+ tower:1,
+ daily:"",
+ friends:0,
+ history:[]
 };
 
-const hourly=10;
-const daily=hourly*24;
+try{
+let old=JSON.parse(localStorage.getItem("nexora"));
+if(old)data={...data,...old};
+}catch(e){}
+
+let last=Date.now();
 
 function save(){
- localStorage.setItem(KEY,JSON.stringify(data));
+ localStorage.setItem("nexora",JSON.stringify(data));
+}
+
+function rate(){
+ return 10*(1+Math.floor(data.vault/100)*0.1);
 }
 
 function update(){
  let now=Date.now();
- let elapsed=Math.max(0,Math.min(now-data.last,86400000));
- let rate=hourly*data.level;
- let earned=elapsed/3600000*rate;
+ let seconds=Math.min((now-last)/1000,86400);
+ data.pending+=rate()*seconds/3600;
+ last=now;
 
- data.balance+=earned;
- data.last=now;
-
- let required=data.level*1000;
- let percent=Math.min(100,data.vault/required*100);
-
- document.getElementById("balance").textContent=data.balance.toFixed(4);
- document.getElementById("earned").textContent=earned.toFixed(4);
- document.getElementById("hour").textContent=rate.toFixed(2);
- document.getElementById("day").textContent=(rate*24).toFixed(2);
- document.getElementById("boost").textContent="x"+data.level.toFixed(2);
- document.getElementById("level").textContent=data.level;
- document.getElementById("level2").textContent=data.level;
- document.getElementById("vault").textContent=data.vault.toFixed(2);
- document.getElementById("vault2").textContent=data.vault.toFixed(2)+" NEX";
- document.getElementById("percent").textContent=percent.toFixed(0)+"%";
- document.getElementById("bar").style.width=percent+"%";
- document.getElementById("withdrawbalance").textContent=data.balance.toFixed(4)+" NEX";
- document.getElementById("refcount").textContent=data.referrals;
- document.getElementById("history").innerHTML=
- data.history.length?data.history.map(x=>"<p>"+x+"</p>").join(""):"Заявок пока нет";
+ $("balance").textContent=data.balance.toFixed(4);
+ $("earned").textContent=data.pending.toFixed(4);
+ $("vaultBalance").textContent=data.vault.toFixed(4);
+ $("vaultLevel").textContent=1+Math.floor(data.vault/100);
+ $("vaultRate").textContent=rate().toFixed(2);
+ $("level").textContent=1+Math.floor(data.vault/100);
+ $("percent").textContent=Math.floor(data.vault%100);
+ $("progress").style.width=(data.vault%100)+"%";
+ $("nextLevel").textContent=100-data.vault%100;
+ $("withdrawBalance").textContent=data.balance.toFixed(4);
+ $("friendsCount").textContent=data.friends;
 
  save();
 }
 
+function addHistory(name,amount){
+ data.history.unshift(name+" : "+amount+" NEX");
+ data.history=data.history.slice(0,20);
+ $("history").innerHTML=data.history.join("<br>");
+}
+
+function collect(){
+ if(data.pending<=0)return;
+ data.balance+=data.pending;
+ addHistory("Mining",data.pending.toFixed(4));
+ data.pending=0;
+ update();
+ alert("Начисление получено!");
+}
+
+function dailyBonus(){
+ let today=new Date().toISOString().slice(0,10);
+ if(data.daily===today){
+ alert("Бонус уже получен сегодня!");
+ return;
+ }
+ data.daily=today;
+ data.balance+=25;
+ addHistory("Daily bonus",25);
+ update();
+ $("bonusMessage").textContent="Получено +25 NEX!";
+}
+
 function deposit(){
- let amount=100;
- if(data.balance<amount){
-  alert("Недостаточно NEX. Нужно 100 NEX.");
-  return;
- }
- data.balance-=amount;
- data.vault+=amount;
-
- while(data.vault>=data.level*1000){
-  data.vault-=data.level*1000;
-  data.level++;
- }
- update();
- alert("Виртуальный залог внесён!");
-}
-
-function swap(){
- let amount=Number(document.getElementById("swapamount").value);
- if(amount<=0||amount>data.balance){
-  alert("Проверь количество NEX.");
-  return;
- }
- document.getElementById("swapresult").textContent=
- "Расчёт: "+(amount/1000).toFixed(4)+" TON (демо)";
-}
-
-function withdraw(){
- let amount=Number(document.getElementById("withdrawamount").value);
- if(amount<10000||amount>data.balance){
-  alert("Минимум 10 000 NEX. Проверь баланс.");
-  return;
- }
- data.balance-=amount;
- data.history.unshift("Тестовая заявка: "+amount.toFixed(2)+" NEX");
- update();
- alert("Тестовая заявка создана.");
-}
-
-function copyReferral(){
- let link=location.href+"?ref=NEXORA";
- if(navigator.clipboard){
-  navigator.clipboard.writeText(link).then(()=>alert("Ссылка скопирована"));
- }else{
-  alert(link);
- }
-}
-
-function openPage(id,btn){
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
- btn.classList.add("active");
+ let n=Number($("depositAmount").value);
+ if(n<=0||n>data.balance)return alert("Недостаточно средств");
+ data.balance-=n;
+ data.vault+=n;
+ addHistory("Vault deposit",n);
+ $("depositAmount").value="";
  update();
 }
+
+function withdrawVault(){
+ let n=Number($("returnAmount").value);
+ if(n<=0||n>data.vault)return alert("Неверная сумма");
+ data.vault-=n;
+ data.balance+=n;
+ addHistory("Vault return",n);
+ $("returnAmount").value="";
+ update();
+}
+
+function exchange(){
+ let n=Number($("exchangeAmount").value);
+ if(n<=0||n>data.balance)return alert("Неверная сумма");
+ data.balance-=n;
+ addHistory("Demo exchange",n);
+ update();
+ alert("Демонстрационный обмен выполнен");
+}
+
+$("exchangeAmount").addEventListener("input",()=>{
+ $("exchangeResult").textContent=
+ (Number($("exchangeAmount").value||0)/1000).toFixed(3)+" TON";
+});
+
+function copyCode(){
+ navigator.clipboard.writeText($("refCode").textContent)
+ .then(()=>alert("Код скопирован"))
+ .catch(()=>alert("NEXORA591007"));
+}
+
+function requestWithdraw(){
+ let n=Number($("withdrawAmount").value);
+ let address=$("walletAddress").value.trim();
+
+ if(n<=0||n>data.balance)return alert("Неверная сумма");
+ if(!address)return alert("Укажи публичный адрес кошелька");
+
+ data.balance-=n;
+ addHistory("TEST withdrawal request",n);
+ $("withdrawAmount").value="";
+ update();
+ alert("Тестовая заявка сохранена. Реальный перевод не выполнен.");
+}
+
+function openPage(id,button){
+ document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+ document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("selected"));
+ $("miningContent").style.display=id==="mining"?"block":"none";
+ if(id!=="mining")$(id).classList.add("active");
+ button.classList.add("selected");
+ update();
+}
+
+function changeLang(){
+ let lang=localStorage.getItem("nexoraLang")||"ru";
+ lang=lang==="ru"?"uk":"ru";
+ localStorage.setItem("nexoraLang",lang);
+ alert(lang==="uk"?"Мову змінено на українську":"Язык изменён на русский");
+}
+
+const wrap=document.createElement("div");
+wrap.id="miningContent";
+const body=document.body;
+Array.from(body.children).forEach(el=>{
+ if(!["STYLE","SECTION","NAV","SCRIPT"].includes(el.tagName)){
+  wrap.appendChild(el);
+ }
+});
+body.insertBefore(wrap,body.firstChild);
+
+const collectButton=document.createElement("button");
+collectButton.textContent="Забрать намайненное";
+collectButton.onclick=collect;
+$("miningContent").appendChild(collectButton);
 
 update();
 setInterval(update,1000);
+
+if(window.Telegram&&window.Telegram.WebApp){
+ window.Telegram.WebApp.ready();
+ window.Telegram.WebApp.expand();
+}
 </script>
 </body>
 </html>
