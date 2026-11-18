@@ -8,13 +8,15 @@
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         :root {
-            --bg-color: #121620;
-            --card-bg: #1c2230;
-            --card-border: rgba(255, 152, 0, 0.25);
-            --primary-gold: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);
-            --accent-yellow: #ffb300;
+            --bg-dark: #000000;
+            --sheet-bg: #1c1f24;
+            --card-bg: #272a2f;
+            --card-light: #32363c;
+            --gold-main: #f3ba2f;
+            --gold-grad: linear-gradient(180deg, #ffdf73 0%, #f3ba2f 50%, #c88a11 100%);
+            --blue-grad: linear-gradient(180deg, #5d78ff 0%, #2a3990 100%);
             --text-main: #ffffff;
-            --text-muted: #94a3b8;
+            --text-muted: #8b8e93;
         }
 
         * {
@@ -28,71 +30,66 @@
         }
 
         body {
-            background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(circle at 50% -10%, rgba(255, 152, 0, 0.2) 0%, transparent 55%),
-                radial-gradient(circle at 85% 30%, rgba(30, 41, 59, 0.8) 0%, transparent 60%);
+            background-color: var(--bg-dark);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding-bottom: 75px;
+            overflow-x: hidden;
         }
 
-        /* Шапка в стиле Hamster */
-        .top-header {
+        /* Верхняя черная шапка профиля */
+        .top-user-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
-            background: rgba(18, 22, 32, 0.9);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            padding: 12px 16px 18px;
+            background: #000000;
         }
 
-        .exchange-pill {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 5px 12px;
-            font-size: 12px;
-            font-weight: 700;
+        .user-info {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 10px;
         }
 
-        .profile-pill {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 4px 12px 4px 6px;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-        }
-
-        .avatar-circle {
-            width: 22px;
-            height: 22px;
-            background: var(--primary-gold);
-            border-radius: 50%;
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: #272a2f;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
-            font-weight: bold;
-            color: #121620;
+            font-size: 16px;
         }
 
-        .content {
-            padding: 14px;
+        .user-name {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .exchange-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #1c1f24;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* Основной корпус с фирменным золотым ободком сверху как в Hamster Kombat */
+        .main-sheet {
             flex: 1;
-            overflow-y: auto;
+            background: var(--sheet-bg);
+            border-top: 2px solid var(--gold-main);
+            border-radius: 36px 36px 0 0;
+            box-shadow: 0 -10px 35px rgba(243, 186, 47, 0.28);
+            padding: 16px 16px 85px;
+            display: flex;
+            flex-direction: column;
         }
 
         .tab-view {
@@ -105,99 +102,160 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        /* Карточки */
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 18px;
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Блок прибыли в час */
-        .profit-row {
+        /* 3 плашки сверху (Прибыль за тап / Для апа / Прибыль в час) */
+        .top-stats-3 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
-        .profit-card {
+        .stat-pill {
             background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 14px;
-            padding: 10px 6px;
+            border-radius: 12px;
+            padding: 8px 4px;
             text-align: center;
         }
 
-        /* Главная монета хомяка */
-        .hamster-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
+        .stat-pill-label {
+            font-size: 10px;
+            font-weight: 600;
+            margin-bottom: 4px;
         }
 
-        .coin-score {
+        .stat-pill-val {
+            font-size: 12px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        /* Счетчик монет */
+        .balance-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 6px 0 12px;
+        }
+
+        .coin-svg {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--gold-grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: #7a4b00;
+            font-size: 20px;
+            box-shadow: 0 2px 10px rgba(243, 186, 47, 0.4);
+            border: 2px solid #fff3b0;
+        }
+
+        .balance-number {
             font-size: 38px;
             font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        /* Шкала лиги */
+        .league-bar-wrap {
+            margin-bottom: 18px;
+        }
+
+        .league-header {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
-            color: #fff;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 6px;
         }
 
-        .coin-icon {
-            font-size: 32px;
+        .league-track {
+            width: 100%;
+            height: 8px;
+            background: #272a2f;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .hamster-btn {
-            width: 210px;
-            height: 210px;
+        .league-fill {
+            height: 100%;
+            width: 2%;
+            background: linear-gradient(90deg, #74c69d, #f3ba2f, #ff7b00);
+            border-radius: 10px;
+            transition: width 0.2s ease;
+        }
+
+        /* Главный круг с хомяком */
+        .tap-circle-outer {
+            width: 250px;
+            height: 250px;
+            margin: 6px auto 18px;
             border-radius: 50%;
-            background: radial-gradient(circle, #ffb300 0%, #e65100 80%);
-            border: 6px solid #ffe082;
+            background: radial-gradient(circle, #3d52c9 0%, #19225c 70%, #0f1438 100%);
+            padding: 12px;
+            box-shadow: 0 12px 35px rgba(42, 57, 144, 0.6), inset 0 2px 10px rgba(255,255,255,0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 75px;
             cursor: pointer;
-            box-shadow: 0 0 45px rgba(255, 152, 0, 0.45);
-            transition: transform 0.08s ease;
+            transition: transform 0.06s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        .hamster-btn:active {
-            transform: scale(0.93);
+        .tap-circle-outer:active {
+            transform: scale(0.95);
         }
 
-        /* Кнопки */
-        .btn-main {
+        .tap-circle-inner {
             width: 100%;
-            padding: 14px;
-            border-radius: 14px;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 35%, #4c66f5 0%, #1a246b 85%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Нижняя панель энергии и буста */
+        .energy-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 6px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .energy-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .boost-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
             border: none;
-            background: var(--primary-gold);
-            color: #121620;
-            font-weight: 800;
-            font-size: 15px;
+            font-size: 13px;
+            font-weight: 700;
             cursor: pointer;
-            text-align: center;
-            box-shadow: 0 4px 16px rgba(255, 152, 0, 0.35);
         }
 
-        .btn-main:active {
-            opacity: 0.85;
-            transform: scale(0.99);
-        }
-
-        /* Карточки улучшений (Mine) */
+        /* Карточки Mine */
         .mine-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -206,50 +264,119 @@
 
         .mine-card {
             background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             cursor: pointer;
         }
 
-        /* Нижнее меню (5 вкладок Hamster Kombat) */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 62px;
-            background: rgba(18, 22, 32, 0.96);
-            backdrop-filter: blur(15px);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
+        .mine-card:active {
+            background: var(--card-light);
         }
 
-        .nav-btn {
+        .mine-top {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .mine-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #32363c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .mine-bottom {
+            border-top: 1px solid rgba(255,255,255,0.07);
+            padding-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .btn-gold {
+            width: 100%;
+            padding: 15px;
+            border-radius: 14px;
+            border: none;
+            background: var(--gold-grad);
+            color: #1c1f24;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(243, 186, 47, 0.35);
+        }
+
+        /* Плавающая нижняя панель навигации как в Hamster Kombat */
+        .bottom-nav-wrap {
+            position: fixed;
+            bottom: 10px;
+            left: 12px;
+            right: 12px;
+            background: #272a2f;
+            border-radius: 18px;
+            padding: 6px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .nav-tab {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            padding: 6px 2px;
+            border-radius: 12px;
             background: none;
             border: none;
             color: var(--text-muted);
-            font-size: 9px;
-            cursor: pointer;
-            gap: 4px;
-            flex: 1;
-        }
-
-        .nav-btn.active {
-            color: var(--accent-yellow);
+            font-size: 10px;
             font-weight: 600;
+            gap: 3px;
+            cursor: pointer;
         }
 
-        .nav-btn svg {
-            width: 18px;
-            height: 18px;
+        .nav-tab.active {
+            background: #1c1f24;
+            color: #ffffff;
+        }
+
+        .nav-tab svg {
+            width: 20px;
+            height: 20px;
             fill: currentColor;
+        }
+
+        /* Всплывающая цифра +1 */
+        .float-num {
+            position: fixed;
+            font-size: 26px;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            pointer-events: none;
+            z-index: 9999;
+            animation: floatUp 0.7s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-75px) scale(1.1); }
         }
 
         #ton-connect-button {
@@ -261,142 +388,249 @@
 </head>
 <body>
 
-    <!-- ШАПКА ХАМСТЕРА -->
-    <div class="top-header">
-        <div class="exchange-pill">
-            <span>🐹</span>
-            <span>Binance CEO</span>
+    <!-- ЧЕРНАЯ ШАПКА ПРОФИЛЯ -->
+    <div class="top-user-bar">
+        <div class="user-info">
+            <div class="user-avatar">🐹</div>
+            <div class="user-name">Артур (CEO)</div>
         </div>
-        <div class="profile-pill" onclick="switchTab('wallet')">
-            <div class="avatar-circle">💰</div>
-            <div>
-                <div style="font-size: 9px; font-weight: bold; line-height: 1;">Артур</div>
-                <div style="font-size: 8px; color: var(--text-muted);">Уровень <span id="ui-lvl">1</span></div>
-            </div>
+        <div class="exchange-badge">
+            <span style="color: #f3ba2f;">❖</span>
+            <span>Binance</span>
         </div>
     </div>
 
-    <div class="content">
-        <!-- 1. ГЛАВНАЯ (ТАПАТЕЛЬ) -->
+    <!-- ОСНОВНОЙ КОНТЕЙНЕР С ЗОЛОТЫМ СВЕЧЕНИЕМ -->
+    <div class="main-sheet">
+
+        <!-- 1. ВКЛАДКА EXCHANGE (БИРЖА) -->
         <div id="view-home" class="tab-view active">
-            <!-- Блок прибыли в час -->
-            <div class="profit-row">
-                <div class="profit-card">
-                    <div style="font-size: 9px; color: var(--text-muted);">Прибыль в час</div>
-                    <div style="font-size: 12px; font-weight: bold; color: var(--accent-yellow);">+<span id="ui-profit">0</span></div>
+            <div class="top-stats-3">
+                <div class="stat-pill">
+                    <div class="stat-pill-label" style="color: #f79841;">Прибыль за тап</div>
+                    <div class="stat-pill-val"><span style="color:#f3ba2f;">🪙</span> +<span id="ui-tap-val">1</span></div>
                 </div>
-                <div class="profit-card">
-                    <div style="font-size: 9px; color: var(--text-muted);">Лига</div>
-                    <div style="font-size: 12px; font-weight: bold; color: #64b5f6;">Бронза 🥉</div>
+                <div class="stat-pill">
+                    <div class="stat-pill-label" style="color: #6f72e2;">Монет для апа</div>
+                    <div class="stat-pill-val">5K</div>
                 </div>
-                <div class="profit-card">
-                    <div style="font-size: 9px; color: var(--text-muted);">Энергия</div>
-                    <div style="font-size: 12px; font-weight: bold; color: #81c784;">1000/1000</div>
-                </div>
-            </div>
-
-            <!-- Большая монета с тапом по хомяку -->
-            <div class="hamster-container">
-                <div class="coin-score">
-                    <span class="coin-icon">🪙</span>
-                    <span id="ui-balance">0</span>
-                </div>
-                <div class="hamster-btn" onclick="tapHamster(event)">
-                    🐹
+                <div class="stat-pill">
+                    <div class="stat-pill-label" style="color: #84cb69;">Прибыль в час</div>
+                    <div class="stat-pill-val"><span style="color:#f3ba2f;">🪙</span> +<span id="ui-profit">0</span></div>
                 </div>
             </div>
 
-            <div style="text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 10px;">
-                Тапай по хомяку, зарабатывай монеты!
+            <!-- Баланс -->
+            <div class="balance-display">
+                <div class="coin-svg">$</div>
+                <div class="balance-number" id="ui-balance">0</div>
+            </div>
+
+            <!-- Лига -->
+            <div class="league-bar-wrap">
+                <div class="league-header">
+                    <span>Bronze ›</span>
+                    <span style="color: var(--text-muted);">Level <span id="ui-lvl">1</span>/10</span>
+                </div>
+                <div class="league-track">
+                    <div class="league-fill" id="league-fill"></div>
+                </div>
+            </div>
+
+            <!-- Кнопка Хомяка CEO в костюме -->
+            <div class="tap-circle-outer" onclick="tapHamster(event)">
+                <div class="tap-circle-inner">
+                    <svg viewBox="0 0 200 200" width="195" height="195">
+                        <!-- Уши -->
+                        <circle cx="58" cy="52" r="22" fill="#c97a3d"/>
+                        <circle cx="58" cy="52" r="13" fill="#f4a28c"/>
+                        <circle cx="142" cy="52" r="22" fill="#c97a3d"/>
+                        <circle cx="142" cy="52" r="13" fill="#f4a28c"/>
+                        <!-- Голова и щеки -->
+                        <ellipse cx="100" cy="95" rx="58" ry="52" fill="#e09145"/>
+                        <ellipse cx="64" cy="108" rx="22" ry="18" fill="#f7c08a"/>
+                        <ellipse cx="136" cy="108" rx="22" ry="18" fill="#f7c08a"/>
+                        <ellipse cx="100" cy="104" rx="26" ry="22" fill="#fff0db"/>
+                        <!-- Глаза -->
+                        <circle cx="78" cy="82" r="8" fill="#1a1a1a"/>
+                        <circle cx="80" cy="79" r="3" fill="#ffffff"/>
+                        <circle cx="122" cy="82" r="8" fill="#1a1a1a"/>
+                        <circle cx="124" cy="79" r="3" fill="#ffffff"/>
+                        <!-- Нос и рот -->
+                        <ellipse cx="100" cy="94" rx="8" ry="5" fill="#ff758f"/>
+                        <path d="M90 104 Q100 113 110 104" stroke="#5c3317" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        <rect x="95" y="106" width="10" height="7" rx="2" fill="#ffffff"/>
+                        <!-- Деловой костюм CEO и галстук -->
+                        <path d="M40 190 C40 145, 160 145, 160 190 Z" fill="#1e2229"/>
+                        <polygon points="82,145 118,145 100,185" fill="#ffffff"/>
+                        <polygon points="95,147 105,147 108,175 100,185 92,175" fill="#e63946"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Энергия и Буст -->
+            <div class="energy-row">
+                <div class="energy-left">
+                    <span style="color: #f3ba2f; font-size: 18px;">⚡</span>
+                    <span><span id="ui-energy">1000</span> / 1000</span>
+                </div>
+                <button class="boost-btn" onclick="fullEnergy()">
+                    <span style="font-size: 18px;">🚀</span>
+                    <span>Boost</span>
+                </button>
             </div>
         </div>
 
-        <!-- 2. БИРЖА (MINE - УЛУЧШЕНИЯ) -->
+        <!-- 2. ВКЛАДКА MINE (ПРОКАЧКА КАРТ) -->
         <div id="view-mine" class="tab-view">
-            <div class="card" style="margin-bottom: 12px;">
-                <div style="font-size: 15px; font-weight: bold;">Карты биржи</div>
-                <div style="font-size: 11px; color: var(--text-muted);">Прокачивайте пассивный доход в час</div>
+            <div class="balance-display" style="margin-bottom: 16px;">
+                <div class="coin-svg">$</div>
+                <div class="balance-number" id="ui-balance-mine">0</div>
             </div>
+
             <div class="mine-grid">
-                <div class="mine-card" onclick="buyCard(500, 150, 'PR Team')">
-                    <div style="font-weight: bold; font-size: 13px;">PR Team</div>
-                    <div style="font-size: 10px; color: var(--text-muted); margin: 4px 0;">Доход: +150/ч</div>
-                    <div style="font-size: 12px; font-weight: bold; color: var(--accent-yellow);">🪙 500</div>
+                <div class="mine-card" onclick="buyCard(250, 120, 'Fan tokens', 'card1')">
+                    <div class="mine-top">
+                        <div class="mine-icon">🎟️</div>
+                        <div>
+                            <div style="font-size: 12px; font-weight: 700;">Fan tokens</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">Прибыль в час</div>
+                            <div style="font-size: 11px; font-weight: 700; color: #f3ba2f;">+120</div>
+                        </div>
+                    </div>
+                    <div class="mine-bottom">
+                        <span style="color: var(--text-muted);">lvl <span id="card1-lvl">0</span></span>
+                        <span>🪙 250</span>
+                    </div>
                 </div>
-                <div class="mine-card" onclick="buyCard(1200, 400, 'Risk Management')">
-                    <div style="font-weight: bold; font-size: 13px;">Risk Management</div>
-                    <div style="font-size: 10px; color: var(--text-muted); margin: 4px 0;">Доход: +400/ч</div>
-                    <div style="font-size: 12px; font-weight: bold; color: var(--accent-yellow);">🪙 1200</div>
+
+                <div class="mine-card" onclick="buyCard(500, 280, 'Staking', 'card2')">
+                    <div class="mine-top">
+                        <div class="mine-icon">📈</div>
+                        <div>
+                            <div style="font-size: 12px; font-weight: 700;">Staking</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">Прибыль в час</div>
+                            <div style="font-size: 11px; font-weight: 700; color: #f3ba2f;">+280</div>
+                        </div>
+                    </div>
+                    <div class="mine-bottom">
+                        <span style="color: var(--text-muted);">lvl <span id="card2-lvl">0</span></span>
+                        <span>🪙 500</span>
+                    </div>
+                </div>
+
+                <div class="mine-card" onclick="buyCard(1000, 600, 'BTC pairs', 'card3')">
+                    <div class="mine-top">
+                        <div class="mine-icon">₿</div>
+                        <div>
+                            <div style="font-size: 12px; font-weight: 700;">BTC pairs</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">Прибыль в час</div>
+                            <div style="font-size: 11px; font-weight: 700; color: #f3ba2f;">+600</div>
+                        </div>
+                    </div>
+                    <div class="mine-bottom">
+                        <span style="color: var(--text-muted);">lvl <span id="card3-lvl">0</span></span>
+                        <span>🪙 1 000</span>
+                    </div>
+                </div>
+
+                <div class="mine-card" onclick="buyCard(2500, 1500, 'TON + Hamster', 'card4')">
+                    <div class="mine-top">
+                        <div class="mine-icon">💎</div>
+                        <div>
+                            <div style="font-size: 12px; font-weight: 700;">TON + Hamster</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">Прибыль в час</div>
+                            <div style="font-size: 11px; font-weight: 700; color: #f3ba2f;">+1 500</div>
+                        </div>
+                    </div>
+                    <div class="mine-bottom">
+                        <span style="color: var(--text-muted);">lvl <span id="card4-lvl">0</span></span>
+                        <span>🪙 2 500</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. ДРУЗЬЯ (FRIENDS) -->
+        <!-- 3. ВКЛАДКА FRIENDS -->
         <div id="view-friends" class="tab-view">
-            <div class="card">
-                <div style="font-size: 16px; font-weight: bold;">Пригласи друзей!</div>
-                <div style="font-size: 11px; color: var(--text-muted); margin-top: 3px;">Получай бонусы за каждого друга</div>
+            <div style="text-align: center; margin-bottom: 16px;">
+                <h2 style="font-size: 22px; margin-bottom: 4px;">Пригласите друзей!</h2>
+                <p style="font-size: 12px; color: var(--text-muted);">Вы и ваш друг получите бонусы</p>
             </div>
-            <div class="card">
-                <div style="font-size: 11px; color: var(--text-muted);">Ваша реферальная ссылка</div>
-                <div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:8px; font-size:10px; color:var(--text-muted); margin:8px 0; word-break:break-all;">
-                    https://t.me/HamsterKombatBot?startapp=ref_5910070466
+            <div style="background: var(--card-bg); border-radius: 16px; padding: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+                <div style="font-size: 28px;">🎁</div>
+                <div>
+                    <div style="font-size: 13px; font-weight: 700;">Пригласить друга</div>
+                    <div style="font-size: 12px; color: #f3ba2f; font-weight: 700;">+5 000 <span style="color: var(--text-muted); font-weight: 400;">для вас и вашего друга</span></div>
                 </div>
-                <button class="btn-main" onclick="copyRef()">Пригласить друга</button>
             </div>
+            <button class="btn-gold" onclick="copyRef()">Пригласить друга</button>
         </div>
 
-        <!-- 4. ЗАРАБОТОК (EARN) -->
+        <!-- 4. ВКЛАДКА EARN -->
         <div id="view-earn" class="tab-view">
-            <div class="card">
-                <div style="font-size: 16px; font-weight: bold;">Ежедневные награды</div>
-                <p style="font-size: 11px; color: var(--text-muted); margin: 6px 0;">Заходите каждый день и забирайте монеты.</p>
-                <button class="btn-main" onclick="claimDaily(5000)">Забрать 5 000 🪙</button>
+            <div style="text-align: center; margin-bottom: 16px;">
+                <div style="font-size: 46px; margin-bottom: 6px;">🪙</div>
+                <h2 style="font-size: 22px;">Заработайте больше монет</h2>
+            </div>
+            <div style="background: var(--card-bg); border-radius: 16px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;" onclick="claimDaily(this)">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="font-size: 26px;">📅</div>
+                    <div>
+                        <div style="font-size: 13px; font-weight: 700;">Ежедневная награда</div>
+                        <div style="font-size: 12px; color: #f3ba2f; font-weight: 700;">+5 000</div>
+                    </div>
+                </div>
+                <span style="color: var(--text-muted);">›</span>
             </div>
         </div>
 
-        <!-- 5. КОШЕЛЕК / ВЫВОД (AIRDROP) -->
+        <!-- 5. ВКЛАДКА AIRDROP (КОШЕЛЕК TON) -->
         <div id="view-wallet" class="tab-view">
-            <div class="card" style="text-align: center;">
-                <div style="font-size: 11px; color: var(--text-muted);">ВАШ БАЛАНС ТОКЕНОВ</div>
-                <div style="font-size: 26px; font-weight: 800; margin: 8px 0;" id="ui-balance-2">0</div>
-                <p style="font-size: 11px; color: var(--text-muted); margin: 8px 0;">Подключите Tonkeeper для получения аирдропа и транзакций</p>
+            <div style="text-align: center; margin-bottom: 16px;">
+                <div style="font-size: 50px; margin-bottom: 8px;">🐹</div>
+                <h2 style="font-size: 22px; margin-bottom: 6px;">Airdrop</h2>
+                <p style="font-size: 12px; color: var(--text-muted);">Подключите ваш кошелек TON для участия в листинге и транзакциях</p>
+            </div>
+            <div style="background: var(--card-bg); border-radius: 16px; padding: 16px; text-align: center;">
                 <div id="ton-connect-button"></div>
             </div>
         </div>
+
     </div>
 
-    <!-- НИЖНЯЯ НАВИГАЦИЯ HAMSTER (5 вкладок) -->
-    <nav class="bottom-nav">
-        <button class="nav-btn active" id="nav-home" onclick="switchTab('home')">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            Биржа
+    <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ HAMSTER KOMBAT -->
+    <div class="bottom-nav-wrap">
+        <button class="nav-tab active" id="nav-home" onclick="switchTab('home')">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            Exchange
         </button>
-        <button class="nav-btn" id="nav-mine" onclick="switchTab('mine')">
-            <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H5v2h14v3h2V6m-3-4H6v2h12V2Z"/></svg>
+        <button class="nav-tab" id="nav-mine" onclick="switchTab('mine')">
+            <svg viewBox="0 0 24 24"><path d="M14.79 10.62L3.5 21.9l-1.4-1.4L13.38 9.21l1.41 1.41M19.27 7.73l-1.98-1.98-1.41 1.41 1.98 1.98 1.41-1.41M15.88 4.34l-1.41 1.41 3.39 3.39 1.41-1.41-3.39-3.39Z"/></svg>
             Mine
         </button>
-        <button class="nav-btn" id="nav-friends" onclick="switchTab('friends')">
-            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z"/></svg>
+        <button class="nav-tab" id="nav-friends" onclick="switchTab('friends')">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
             Friends
         </button>
-        <button class="nav-btn" id="nav-earn" onclick="switchTab('earn')">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        <button class="nav-tab" id="nav-earn" onclick="switchTab('earn')">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/></svg>
             Earn
         </button>
-        <button class="nav-btn" id="nav-wallet" onclick="switchTab('wallet')">
+        <button class="nav-tab" id="nav-wallet" onclick="switchTab('wallet')">
             <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9z"/></svg>
             Airdrop
         </button>
-    </nav>
+    </div>
 
     <script>
-        // ВАШ ВСТРОЕННЫЙ КОШЕЛЕК ДЛЯ ТРАНЗАКЦИЙ:
+        // ВАШ ВСТРОЕННЫЙ КОШЕЛЕК:
         const MY_WALLET_ADDRESS = "UQD1yWfSHDBQfdsHSMbxQZ4ENGCfqRMSJpnit1zMfTxVVoB1";
 
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
+            window.Telegram.WebApp.setHeaderColor('#000000');
         }
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -405,60 +639,68 @@
         });
         tonConnectUI.uiOptions = { buttonRootId: 'ton-connect-button' };
 
-        // Обнуленные стартовые показатели
         let balance = 0;
         let profitPerHour = 0;
-        let level = 1;
+        let energy = 1000;
+        const maxEnergy = 1000;
+        let tapPower = 1;
+        const cardLevels = { card1: 0, card2: 0, card3: 0, card4: 0 };
 
-        // Пассивный доход в секунду на основе profitPerHour
+        // Пассивный фарм и восстановление энергии
         setInterval(() => {
             if (profitPerHour > 0) {
                 balance += profitPerHour / 3600;
-                updateUI();
             }
+            if (energy < maxEnergy) {
+                energy = Math.min(maxEnergy, energy + 3);
+            }
+            updateUI();
         }, 1000);
 
         function updateUI() {
-            document.getElementById('ui-balance').innerText = Math.floor(balance).toLocaleString();
-            document.getElementById('ui-balance-2').innerText = Math.floor(balance).toLocaleString();
-            document.getElementById('ui-profit').innerText = profitPerHour.toLocaleString();
-            document.getElementById('ui-lvl').innerText = level;
+            const fmt = Math.floor(balance).toLocaleString('ru-RU');
+            document.getElementById('ui-balance').innerText = fmt;
+            document.getElementById('ui-balance-mine').innerText = fmt;
+            document.getElementById('ui-profit').innerText = profitPerHour.toLocaleString('ru-RU');
+            document.getElementById('ui-energy').innerText = energy;
+
+            const pct = Math.min(100, Math.max(2, (balance / 5000) * 100));
+            document.getElementById('league-fill').style.width = pct + '%';
         }
 
-        // Тап по хомяку (+1 монета за клик)
-        function tapHamster(event) {
-            balance += 1;
+        function tapHamster(e) {
+            if (energy < tapPower) return;
+            energy -= tapPower;
+            balance += tapPower;
             updateUI();
 
-            // Эффект всплывающего числа +1
-            const el = document.createElement('div');
-            el.innerText = '+1';
-            el.style.position = 'absolute';
-            el.style.left = (event.clientX - 10) + 'px';
-            el.style.top = (event.clientY - 30) + 'px';
-            el.style.color = '#ffb300';
-            el.style.fontWeight = '900';
-            el.style.fontSize = '22px';
-            el.style.pointerEvents = 'none';
-            el.style.transition = 'all 0.5s ease';
-            document.body.appendChild(el);
+            if (window.Telegram?.WebApp?.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            }
 
-            setTimeout(() => {
-                el.style.transform = 'translateY(-40px)';
-                el.style.opacity = '0';
-            }, 20);
-            setTimeout(() => el.remove(), 500);
+            const num = document.createElement('div');
+            num.className = 'float-num';
+            num.innerText = '+' + tapPower;
+            num.style.left = (e.clientX - 15) + 'px';
+            num.style.top = (e.clientY - 30) + 'px';
+            document.body.appendChild(num);
+            setTimeout(() => num.remove(), 700);
         }
 
-        // Покупка карточки для пассивного дохода
-        async function buyCard(cost, profitInc, name) {
+        function fullEnergy() {
+            energy = maxEnergy;
+            updateUI();
+            alert('⚡ Энергия полностью восстановлена!');
+        }
+
+        async function buyCard(cost, profitInc, name, id) {
             if (balance < cost) {
-                alert('Недостаточно монет!');
+                alert(`Недостаточно монет! Нужно ${cost} монет.`);
                 return;
             }
 
             if (!tonConnectUI.connected) {
-                alert('Подключите кошелек в разделе Airdrop перед покупкой!');
+                alert('Подключите кошелек Tonkeeper во вкладке Airdrop!');
                 switchTab('wallet');
                 return;
             }
@@ -470,22 +712,26 @@
                 });
                 balance -= cost;
                 profitPerHour += profitInc;
+                cardLevels[id]++;
+                document.getElementById(id + '-lvl').innerText = cardLevels[id];
                 updateUI();
-                alert(`Карточка "${name}" успешно куплена! Доход в час увеличен.`);
-            } catch (e) {
+                alert(`Карта «${name}» улучшена до уровня ${cardLevels[id]}!`);
+            } catch (err) {
                 alert('Транзакция отменена.');
             }
         }
 
-        function claimDaily(reward) {
-            balance += reward;
+        function claimDaily(el) {
+            balance += 5000;
             updateUI();
-            alert(`Награда +${reward.toLocaleString()} монет получена!`);
+            el.style.opacity = '0.5';
+            el.onclick = null;
+            alert('🎉 Ежедневная награда +5 000 монет получена!');
         }
 
         function switchTab(id) {
             document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
             document.getElementById('view-' + id).classList.add('active');
             document.getElementById('nav-' + id).classList.add('active');
             window.scrollTo(0, 0);
@@ -493,7 +739,7 @@
 
         function copyRef() {
             navigator.clipboard?.writeText('https://t.me/HamsterKombatBot?startapp=ref_5910070466');
-            alert('Реферальная ссылка скопирована!');
+            alert('Ссылка приглашения скопирована!');
         }
     </script>
 </body>
